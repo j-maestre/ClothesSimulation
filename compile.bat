@@ -2,6 +2,10 @@
 
 cd /d %~dp0
 
+if exist output (
+    rd /s /q output
+)
+
 cmake .
 
 if %errorlevel% neq 0 (
@@ -22,23 +26,12 @@ if %errorlevel% neq 0 (
 mkdir output
 
 :: Mover los archivos generados a la carpeta "output"
-move ALL_BUILD.vcxproj output
-move ALL_BUILD.vcxproj.filters output
-move ALL_BUILD.vcxproj.user output
-move cmake_install.cmake output
-move CMakeCache.txt output
-move CPackConfig.cmake output
-move CPackSourceConfig.cmake output
-move INSTALL.vcxproj output
-move INSTALL.vcxproj.filters output
-move PACKAGE.vcxproj output
-move PACKAGE.vcxproj.filters output
-move RayLib.sln output
-move RayLib.vcxproj output
-move RayLib.vcxproj.filters output
-move RayLib.vcxproj.user output
-move ZERO_CHECK.vcxproj output
-move ZERO_CHECK.vcxproj.filters output
+:: move *.vcxproj output
+:: move *.vcxproj.filters output
+:: move *.vcxproj.user output
+:: move *.cmake output
+:: move *.md output
+:: move CMakeCache.txt output
 
 echo Compilation and file move complete!
 pause
