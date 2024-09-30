@@ -1,38 +1,61 @@
 #include <stdio.h>
 #include <raylib.h>
+#include "raymath.h"
+
 
 int main(int argc, char** argv)
 {
     // Inicializar la ventana
-    const int screenWidth = 800;
-    const int screenHeight = 600;
-    InitWindow(screenWidth, screenHeight, "Hello Triangle");
+    //const int screenWidth = 800;
+    //const int screenHeight = 600;
+    
+    const int screenWidth = GetMonitorWidth(0);
+    const int screenHeight = GetMonitorHeight(0);
+    InitWindow(screenWidth, screenHeight, "Hello Cube");
+    SetWindowState(FLAG_FULLSCREEN_MODE);
+    //HideCursor();
+    //ShowCursor();
+    
+    // Definir la cï¿½mara
+    Camera camera = { 0 };
+    camera.position = { 0.0f, 5.0f, -10.0f };
+    camera.target = { 0.0f, 1.0f, 0.0f };
+    camera.up = { 0.0f, 1.0f, 0.0f };
+    camera.fovy = 90.0f;
+    camera.projection = CameraProjection::CAMERA_PERSPECTIVE;
 
-    // Definir los vértices del triángulo
-    Vector2 point1 = { screenWidth / 2.0f, screenHeight / 4.0f };
-    Vector2 point2 = { screenWidth / 4.0f, screenHeight * 3.0f / 4.0f };
-    Vector2 point3 = { screenWidth * 3.0f / 4.0f, screenHeight * 3.0f / 4.0f };
 
-    // Establecer el color del triángulo
-    Color triangleColor = RED;
+    Vector3 cubePosition = { 0.0f, 1.0f, 0.0f };
+    float cubeSize = 2.0f;
 
-    // Bucle principal
-    while (!WindowShouldClose()) // Detecta si se cierra la ventana
-    {
-        // Comenzar a dibujar
+    SetTargetFPS(60);
+
+    Color black = { 0,0,0,0 };
+
+
+    while (!WindowShouldClose()){
+
+        UpdateCamera(&camera, CAMERA_FIRST_PERSON);
+
+     
         BeginDrawing();
-        ClearBackground(RAYWHITE); // Limpiar el fondo
+        ClearBackground(black);
 
-        // Dibujar el triángulo
-        DrawTriangle(point1, point2, point3, triangleColor);
+        BeginMode3D(camera);
 
-        // Mostrar texto
-        DrawText("Hello Triangle!", 10, 10, 20, DARKGRAY);
+        DrawCube(cubePosition, cubeSize, cubeSize, cubeSize, BLUE);
+        DrawCubeWires(cubePosition, cubeSize, cubeSize, cubeSize, DARKGRAY);
 
-        EndDrawing(); // Finalizar el dibujado
+
+        EndMode3D();
+        
+        //int fps = GetFPS();
+        //DrawText("Hello Cube!", 10, 10, 20, DARKGRAY);
+        DrawFPS(10, 10);
+
+        EndDrawing();
     }
 
-    // Cerrar ventana y liberar recursos
     CloseWindow();
 
     return 0;
