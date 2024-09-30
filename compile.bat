@@ -27,7 +27,6 @@ move ALL_BUILD.vcxproj.filters output
 move ALL_BUILD.vcxproj.user output
 move cmake_install.cmake output
 move CMakeCache.txt output
-move CMakeLists.txt output
 move CPackConfig.cmake output
 move CPackSourceConfig.cmake output
 move INSTALL.vcxproj output
