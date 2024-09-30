@@ -31,15 +31,24 @@
 *.out
 *.app
 
+
 # Additional folders
 .idea
 .vs
 .vscode
 cmake*/
 
+*pdb
 
-.vcxproj
-.filters
-.user
-.cmake
-.sln
+deps
+
+*.recipe
+*.tlog
+*.ilk
+*.log
+
+*.vcxproj
+*.filters
+*.user
+*.cmake
+*.sln
