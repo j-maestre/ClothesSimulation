@@ -6,7 +6,8 @@ if exist output (
     rd /s /q output
 )
 
-cmake .
+cd build
+cmake ..
 
 if %errorlevel% neq 0 (
     echo ERROR generation compilation files

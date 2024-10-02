@@ -11,7 +11,7 @@ cmake_minimum_required(VERSION 3.0)
 # PROJECT
 # ---------------------------------------------------------------------
 # Set the project name
-project(RayLib)
+project(ClothesSimulation)
 
 
 # ---------------------------------------------------------------------
@@ -87,7 +87,7 @@ add_subdirectory(${IMGUI_DIR} EXCLUDE_FROM_ALL)
 # EXECUTABLE
 # ---------------------------------------------------------------------
 # Set the executable of the project
-add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES})
+add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES} "source/private/rope_raylib.cpp" "source/public/rope_raylib.h")
 
 
 # ---------------------------------------------------------------------

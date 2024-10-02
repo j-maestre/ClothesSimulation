@@ -1,18 +1,19 @@
 #include <stdio.h>
 #include <raylib.h>
 #include "raymath.h"
+#include "public/rope_raylib.h"
 
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv){
+
     // Inicializar la ventana
-    //const int screenWidth = 800;
-    //const int screenHeight = 600;
+    const int screenWidth = 800;
+    const int screenHeight = 600;
     
-    const int screenWidth = GetMonitorWidth(0);
-    const int screenHeight = GetMonitorHeight(0);
+    //const int screenWidth = GetMonitorWidth(0);
+    //const int screenHeight = GetMonitorHeight(0);
     InitWindow(screenWidth, screenHeight, "Hello Cube");
-    SetWindowState(FLAG_FULLSCREEN_MODE);
+    //SetWindowState(FLAG_FULLSCREEN_MODE);
     //HideCursor();
     //ShowCursor();
     
@@ -28,10 +29,16 @@ int main(int argc, char** argv)
     Vector3 cubePosition = { 0.0f, 1.0f, 0.0f };
     float cubeSize = 2.0f;
 
-    SetTargetFPS(60);
+    //SetTargetFPS(60);
 
     Color black = { 0,0,0,0 };
 
+
+    RopeRaylib rope(5.0f, 10);
+    rope.InitRope();
+    printf("Rope created correctly!\n");
+
+    printf("Lenght-> %f\n Num particles %d", rope.m_lenght, rope.m_numParticles);
 
     while (!WindowShouldClose()){
 
