@@ -24,7 +24,7 @@ class Rope {
 		void Update(float dt);
 
 		
-		void InitRope();
+		void InitRope(float x, float y, float z);
 
 		// Return position of the given particle
 		void GetPosition(int index, float& x, float& y, float& z);

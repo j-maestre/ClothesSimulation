@@ -26,29 +26,38 @@ int main(int argc, char** argv){
     camera.projection = CameraProjection::CAMERA_PERSPECTIVE;
 
 
-    Vector3 cubePosition = { 0.0f, 1.0f, 0.0f };
+    Vector3 cubePosition = { 0.0f, 0.0f, 0.0f };
     float cubeSize = 2.0f;
 
     //SetTargetFPS(60);
 
     Color black = { 0,0,0,0 };
+    Color red = {255, 10, 10, 255};
 
 
-    RopeRaylib rope(5.0f, 10);
-    rope.InitRope();
+    RopeRaylib rope(0.5f, 20);
+    rope.InitRope(0.0f, 5.0f, 0.0f);
     printf("Rope created correctly!\n");
+
+    rope.SetColor(BLUE);
 
     printf("Lenght-> %f\n Num particles %d", rope.m_lenght, rope.m_numParticles);
 
-    while (!WindowShouldClose()){
+    while (!WindowShouldClose()) {
 
         UpdateCamera(&camera, CAMERA_FIRST_PERSON);
 
-     
+
         BeginDrawing();
         ClearBackground(black);
-
         BeginMode3D(camera);
+
+
+        rope.Update(GetFrameTime());
+        rope.DrawRope();
+
+
+        //DrawSphere(Vector3{0.0f, 5.0f, 0.0f}, 0.5f, red);
 
         DrawCube(cubePosition, cubeSize, cubeSize, cubeSize, BLUE);
         DrawCubeWires(cubePosition, cubeSize, cubeSize, cubeSize, DARKGRAY);

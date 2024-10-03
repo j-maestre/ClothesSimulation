@@ -1,7 +1,7 @@
 #include "public/rope.h"
 #include <assert.h>
 
-void Rope::InitRope(){
+void Rope::InitRope(float x, float y, float z){
         
 
 
@@ -10,6 +10,12 @@ void Rope::InitRope(){
     
     m_points = new Point[m_numParticles];
     assert(m_points && "New Points is null");
+
+    for (int i = 0; i < m_numParticles; i++) {
+        m_points[i].position[0] = x + (i * m_lenght);
+        m_points[i].position[1] = y; // + (i * m_lenght);
+        m_points[i].position[2] = z; // +(i * m_lenght);
+    }
 
 }
 
