@@ -49,11 +49,11 @@ Rope::Rope(float lenght, unsigned int particles) : m_lenght(lenght), m_numPartic
     m_points = nullptr;
 }
 
-Rope::Rope(const Rope&){
-
+Rope::Rope(const Rope& other){
+    //other.m_desiredDistance = m_desiredDistance;
 }
 
-Rope::Rope(Rope&&){
+Rope::Rope(Rope&& other){
 
 }
 
@@ -65,6 +65,7 @@ Rope::~Rope(){
 
 void Rope::Update(float dt){
 
+    //m_timeStep = dt;
     // Verlet integration    
     for (int i = 0; i < m_numParticles; i++) {
         if (!m_points[i].fixed) {
@@ -122,7 +123,7 @@ void Rope::Update(float dt){
             float zDifference = actual.position[2] - previous.position[2];
 
             // Make unit vector
-            float distanceSquared = xDifference * xDifference + yDifference * yDifference + zDifference * zDifference;
+            float distanceSquared = (xDifference * xDifference) + (yDifference * yDifference) + (zDifference * zDifference);
 
             if (distanceSquared > 0.0f) {
                 float distance = sqrt(distanceSquared);
@@ -136,29 +137,29 @@ void Rope::Update(float dt){
                 if (previous.fixed && !actual.fixed) {
                     // First with the second
 
-                    actual.position[0] -= xDirection * distanceError;
-                    actual.position[1] -= yDirection * distanceError;
-                    actual.position[2] -= zDirection * distanceError;
+                    actual.position[0] -= (xDirection * distanceError);
+                    actual.position[1] -= (yDirection * distanceError);
+                    actual.position[2] -= (zDirection * distanceError);
 
                 }
                 else if (actual.fixed && !previous.fixed) {
                     // Second with the first
 
-                    previous.position[0] += xDirection * distanceError;
-                    previous.position[1] += yDirection * distanceError;
-                    previous.position[2] += zDirection * distanceError;
+                    previous.position[0] += (xDirection * distanceError);
+                    previous.position[1] += (yDirection * distanceError);
+                    previous.position[2] += (zDirection * distanceError);
 
                 }
                 else if (!previous.fixed && !actual.fixed) {
                     // All except first
 
-                    actual.position[0] -= 0.5 * xDirection * distanceError;
-                    actual.position[1] -= 0.5 * yDirection * distanceError;
-                    actual.position[2] -= 0.5f * zDirection * distanceError;
+                    actual.position[0] -= 0.5 * (xDirection * distanceError);
+                    actual.position[1] -= 0.5 * (yDirection * distanceError);
+                    actual.position[2] -= 0.5f * (zDirection * distanceError);
 
-                    previous.position[0] += 0.5 * xDirection * distanceError;
-                    previous.position[1] += 0.5 * yDirection * distanceError;
-                    previous.position[2] += 0.5f * zDirection * distanceError;
+                    previous.position[0] += 0.5 * (xDirection * distanceError);
+                    previous.position[1] += 0.5 * (yDirection * distanceError);
+                    previous.position[2] += 0.5f * (zDirection * distanceError);
                 }
             }
             //float xDirection = xDifference / sqrt(pow(xDifference, 2) + pow(yDifference, 2));
@@ -177,6 +178,14 @@ void Rope::GetPosition(int index, float& x, float& y, float& z){
     x = m_points[index].position[0];
     y = m_points[index].position[1];
     z = m_points[index].position[2];
+}
+
+void Rope::SetPointPosition(int index, float x, float y, float z){
+
+    m_points[index].position[0] = x;
+    m_points[index].position[1] = y;
+    m_points[index].position[2] = z;
+
 }
 
 void Rope::SetStepSize(float step){

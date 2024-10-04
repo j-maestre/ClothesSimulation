@@ -31,6 +31,8 @@ class Rope {
 		// Return position of the given particle
 		void GetPosition(int index, float& x, float& y, float& z);
 
+		void SetPointPosition(int index, float x, float y, float z);
+
 
 		void SetStepSize(float step);
 		void SetMass(float mass);

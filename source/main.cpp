@@ -20,7 +20,7 @@ int main(int argc, char** argv){
     // Definir la c�mara
     Camera camera = { 0 };
     camera.position = { 0.0f, 5.0f, -10.0f };
-    camera.target = { 0.0f, 1.0f, 0.0f };
+    camera.target = { 0.0f, 5.0f, 0.0f };
     camera.up = { 0.0f, 1.0f, 0.0f };
     camera.fovy = 90.0f;
     camera.projection = CameraProjection::CAMERA_PERSPECTIVE;
@@ -36,7 +36,7 @@ int main(int argc, char** argv){
 
 
     RopeRaylib rope(0.5f, 100);
-    rope.InitRope(0.0f, 5.0f, 0.0f, 2.0f, 5.0f, 0.0f);
+    rope.InitRope(0.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f);
     printf("Rope created correctly!\n");
 
     rope.SetColor(BLUE);
@@ -51,6 +51,10 @@ int main(int argc, char** argv){
         BeginDrawing();
         ClearBackground(black);
         BeginMode3D(camera);
+
+        float x, y, z;
+        rope.GetPosition(0,x,y,z);
+        rope.SetPointPosition(0,cosf(GetTime()),y,z);
 
 
         //if (IsKeyDown(KEY_SPACE)) {
