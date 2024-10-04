@@ -8,6 +8,7 @@ class RopeRaylib : public Rope {
 
 	public:
 
+		// Rope lenght and number of particles
 		RopeRaylib(float lenght, unsigned int particles);
 		RopeRaylib(const RopeRaylib&) = delete;
 		RopeRaylib(RopeRaylib&&) = delete;

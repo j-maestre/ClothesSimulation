@@ -12,6 +12,8 @@ class Rope {
 
 	struct Point {
 		float position[3] = { 0.0f };
+		float previous_position[3] = { 0.0f };
+		bool fixed = false;
 	};
 
 	public:
@@ -23,8 +25,8 @@ class Rope {
 		// Called every frame
 		void Update(float dt);
 
-		
-		void InitRope(float x, float y, float z);
+		// First point position and second point position
+		void InitRope(float x1, float y1, float z1, float x2, float y2, float z2);
 
 		// Return position of the given particle
 		void GetPosition(int index, float& x, float& y, float& z);
@@ -44,7 +46,11 @@ protected:
 
 		// There will be a lot of more varables, maybe a class representing all of the variables or a structure
 		float m_mass = 0.1f;
-		float m_stepSize = 0.1f;
+		
+		float m_timeStep = 0.01f;
+		unsigned int jm_jakobsenIterations = 50;
+		float m_gravity = -9.81f;
+		float m_desiredDistance = 0.0f;
 
 		Point* m_points;
 

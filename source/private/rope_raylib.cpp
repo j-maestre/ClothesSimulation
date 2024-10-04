@@ -24,7 +24,7 @@ void RopeRaylib::DrawRope(){
 	for (int i = 0; i < m_numParticles; i++) {
 		
 		GetPosition(i, x,y,z);
-		DrawSphere(Vector3{ x, y, z }, 0.1f, m_color);
+		DrawSphere(Vector3{ x, y, z }, 0.01f, m_color);
 		
 		if (i < m_numParticles-1) {
 			Vector3 startPos = { x,y,z };

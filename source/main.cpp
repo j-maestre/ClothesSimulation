@@ -29,14 +29,14 @@ int main(int argc, char** argv){
     Vector3 cubePosition = { 0.0f, 0.0f, 0.0f };
     float cubeSize = 2.0f;
 
-    //SetTargetFPS(60);
+    SetTargetFPS(60);
 
     Color black = { 0,0,0,0 };
     Color red = {255, 10, 10, 255};
 
 
-    RopeRaylib rope(0.5f, 20);
-    rope.InitRope(0.0f, 5.0f, 0.0f);
+    RopeRaylib rope(0.5f, 100);
+    rope.InitRope(0.0f, 5.0f, 0.0f, 2.0f, 5.0f, 0.0f);
     printf("Rope created correctly!\n");
 
     rope.SetColor(BLUE);
@@ -53,8 +53,10 @@ int main(int argc, char** argv){
         BeginMode3D(camera);
 
 
-        rope.Update(GetFrameTime());
-        rope.DrawRope();
+        //if (IsKeyDown(KEY_SPACE)) {
+            rope.Update(GetFrameTime());
+        //}
+            rope.DrawRope();
 
 
         //DrawSphere(Vector3{0.0f, 5.0f, 0.0f}, 0.5f, red);
