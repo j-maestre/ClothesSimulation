@@ -62,7 +62,7 @@ namespace JE {
 	private:
 
 		float m_timeStep = 0.01f;
-		unsigned int jm_jakobsenIterations = 50;
+		unsigned int m_jakobsenIterations = 50;
 		float m_gravity = -9.81f;
 		float m_desiredDistance = 0.0f;
 

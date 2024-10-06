@@ -75,6 +75,7 @@ int main(int argc, char** argv){
         rope3.GetPosition(0,x,y,z);
         rope3.SetPointPosition(0, rope_3_x_offset + cosf(GetTime() * speed) * 2.0f,y,z);
 
+        if (GetTime() > 2.0f) {
 
         //if (IsKeyDown(KEY_SPACE)) {
             rope.Update(GetFrameTime());
@@ -84,6 +85,7 @@ int main(int argc, char** argv){
             rope.DrawRope();
             rope2.DrawRope();
             rope3.DrawRope();
+        }
             
 
 

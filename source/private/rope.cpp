@@ -72,7 +72,7 @@ Rope::~Rope(){
 void Rope::Update(float dt){
 
 
-    //m_timeStep = dt;
+    m_timeStep = dt;
     // Verlet integration    
     for (int i = 0; i < m_numParticles; i++) {
         if (!m_points[i].fixed) {
@@ -122,7 +122,7 @@ void Rope::Update(float dt){
 
 
     // Enforce constraints
-    for (int iterations = 0; iterations < jm_jakobsenIterations; iterations++) {
+    for (int iterations = 0; iterations < m_jakobsenIterations; iterations++) {
         
         for (int i = 1; i < m_numParticles; i++) {
             Point& previous = m_points[i - 1];
@@ -141,15 +141,14 @@ void Rope::Update(float dt){
 
             if (distanceSquared > 0.0f) {
                 float distance = sqrt(distanceSquared);
-                float distanceError = distance - m_desiredDistance;
                 
                 float xDirection = xDifference / distance;
                 float yDirection = yDifference / distance;
                 float zDirection = zDifference / distance;
 
-                float totalMass = m_points[i].mass + m_points[i - 1].mass;
-                float correction_factor_previous = m_points[i - 1].mass / totalMass;
-                float correction_factor_actual = m_points[i].mass / totalMass;
+                float totalMass =actual.mass + previous.mass;
+                float correction_factor_previous = previous.mass / totalMass;
+                float correction_factor_actual = actual.mass / totalMass;
 
 
                 if (previous.fixed && !actual.fixed) {
