@@ -2,7 +2,10 @@
 #include <assert.h>
 #include <math.h>
 
-void Rope::InitRope(float x1, float y1, float z1, float x2, float y2, float z2){
+namespace JE {
+
+
+void Rope::InitRope(Vec3 first_pos, Vec3 second_pos){
         
 
 
@@ -17,9 +20,9 @@ void Rope::InitRope(float x1, float y1, float z1, float x2, float y2, float z2){
         // How close are we to the last point?
         float w = (float)i / (m_numParticles - 1);
 
-        float x = w * x2 + (1 - w) * x1;
-        float y = w * y2 + (1 - w) * y1;
-        float z = w * z2 + (1 - w) * z1;
+        float x = w * second_pos.x + (1 - w) * first_pos.x;
+        float y = w * second_pos.y + (1 - w) * first_pos.y;
+        float z = w * second_pos.z + (1 - w) * first_pos.z;
 
    
         m_points[i].position[0] = x;
@@ -34,7 +37,7 @@ void Rope::InitRope(float x1, float y1, float z1, float x2, float y2, float z2){
 
         unsigned numberOfSegments = m_numParticles - 1;
 
-        float ropeLength = sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2) + pow(z1 - z2, 2));
+        float ropeLength = sqrt(pow(first_pos.x - second_pos.x, 2) + pow(first_pos.y - second_pos.y, 2) + pow(first_pos.z - second_pos.z, 2));
         m_desiredDistance = ropeLength / (m_numParticles - 1);
 
     }
@@ -188,6 +191,19 @@ void Rope::SetPointPosition(int index, float x, float y, float z){
 
 }
 
+void Rope::TranslateRope(float x, float y, float z){
+
+    for (int i = 0; i < m_numParticles; i++) {
+        m_points[i].position[0] = x;
+        m_points[i].position[1] = x;
+        m_points[i].position[2] = x;
+        
+        m_points[i].previous_position[0] = x;
+        m_points[i].previous_position[1] = x;
+        m_points[i].previous_position[2] = x;
+    }
+}
+
 void Rope::SetStepSize(float step){
 
 }
@@ -195,3 +211,5 @@ void Rope::SetStepSize(float step){
 void Rope::SetMass(float mass){
 
 }
+
+};

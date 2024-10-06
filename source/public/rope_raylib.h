@@ -3,8 +3,9 @@
 #include <raylib.h>
 #include "raymath.h"
 
+namespace JE {
 
-class RopeRaylib : public Rope {
+	class RopeRaylib : public Rope {
 
 	public:
 
@@ -15,9 +16,10 @@ class RopeRaylib : public Rope {
 		~RopeRaylib();
 		virtual void DrawRope();
 		void SetColor(Color color = GREEN);
-	
+
 	private:
 
 		Color m_color;
 
+	};
 };

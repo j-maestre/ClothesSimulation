@@ -29,19 +29,19 @@ int main(int argc, char** argv){
     Vector3 cubePosition = { 0.0f, 0.0f, 0.0f };
     float cubeSize = 2.0f;
 
-    SetTargetFPS(60);
+    SetTargetFPS(100);
 
     Color black = { 0,0,0,0 };
     Color red = {255, 10, 10, 255};
 
 
-    RopeRaylib rope(0.5f, 100);
-    rope.InitRope(0.0f, 5.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+    JE::RopeRaylib rope(0.25f, 10);
+    rope.InitRope(JE::Vec3{ 0.0f, 5.0f, 0.0f }, JE::Vec3{ 0.0f, 0.0f, 0.0f });
     printf("Rope created correctly!\n");
 
     rope.SetColor(BLUE);
 
-    printf("Lenght-> %f\n Num particles %d", rope.m_lenght, rope.m_numParticles);
+    //printf("Lenght-> %f\n Num particles %d", rope.m_lenght, rope.m_numParticles);
 
     while (!WindowShouldClose()) {
 
@@ -54,7 +54,7 @@ int main(int argc, char** argv){
 
         float x, y, z;
         rope.GetPosition(0,x,y,z);
-        rope.SetPointPosition(0,cosf(GetTime()),y,z);
+        rope.SetPointPosition(0,cosf(GetTime() * 3.0f) * 2.0f,y,z);
 
 
         //if (IsKeyDown(KEY_SPACE)) {
