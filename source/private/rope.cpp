@@ -5,7 +5,7 @@
 namespace JE {
 
 
-void Rope::InitRope(Vec3 first_pos, Vec3 second_pos){
+void Rope::InitRope(Vec3 first_pos, Vec3 second_pos, float mass, float friction_factor){
         
 
 
@@ -33,12 +33,15 @@ void Rope::InitRope(Vec3 first_pos, Vec3 second_pos){
         m_points[i].previous_position[1] = y;
         m_points[i].previous_position[2] = z;
         
+        m_points[i].mass = mass;
+        m_points[i].friction_factor = friction_factor;
         m_points[i].fixed = i == 0; // We fix only the first point
 
         unsigned numberOfSegments = m_numParticles - 1;
 
         float ropeLength = sqrt(pow(first_pos.x - second_pos.x, 2) + pow(first_pos.y - second_pos.y, 2) + pow(first_pos.z - second_pos.z, 2));
         m_desiredDistance = ropeLength / (m_numParticles - 1);
+
 
     }
 
@@ -68,6 +71,7 @@ Rope::~Rope(){
 
 void Rope::Update(float dt){
 
+
     //m_timeStep = dt;
     // Verlet integration    
     for (int i = 0; i < m_numParticles; i++) {
@@ -82,7 +86,14 @@ void Rope::Update(float dt){
             float yVelocity = (m_points[i].position[1] - m_points[i].previous_position[1]) / m_timeStep;
             float zVelocity = (m_points[i].position[2] - m_points[i].previous_position[2]) / m_timeStep;
 
-            yVelocity += m_gravity * m_timeStep;
+            float gravity_force = m_gravity * m_points[i].mass;
+            float acceleration_y = gravity_force / m_points[i].mass;
+
+            yVelocity += gravity_force * m_timeStep;
+
+            //xVelocity *= (1 - m_points[i].friction_factor);
+            //yVelocity *= (1 - m_points[i].friction_factor);
+            //zVelocity *= (1 - m_points[i].friction_factor);
             
             // Update new position using Verlet
             m_points[i].position[0] += xVelocity * m_timeStep;
@@ -136,21 +147,25 @@ void Rope::Update(float dt){
                 float yDirection = yDifference / distance;
                 float zDirection = zDifference / distance;
 
+                float totalMass = m_points[i].mass + m_points[i - 1].mass;
+                float correction_factor_previous = m_points[i - 1].mass / totalMass;
+                float correction_factor_actual = m_points[i].mass / totalMass;
+
 
                 if (previous.fixed && !actual.fixed) {
                     // First with the second
 
-                    actual.position[0] -= (xDirection * distanceError);
-                    actual.position[1] -= (yDirection * distanceError);
-                    actual.position[2] -= (zDirection * distanceError);
+                    actual.position[0] -= correction_factor_previous * (xDirection * distanceError);
+                    actual.position[1] -= correction_factor_previous * (yDirection * distanceError);
+                    actual.position[2] -= correction_factor_previous * (zDirection * distanceError);
 
                 }
                 else if (actual.fixed && !previous.fixed) {
                     // Second with the first
 
-                    previous.position[0] += (xDirection * distanceError);
-                    previous.position[1] += (yDirection * distanceError);
-                    previous.position[2] += (zDirection * distanceError);
+                    previous.position[0] += correction_factor_actual * (xDirection * distanceError);
+                    previous.position[1] += correction_factor_actual * (yDirection * distanceError);
+                    previous.position[2] += correction_factor_actual * (zDirection * distanceError);
 
                 }
                 else if (!previous.fixed && !actual.fixed) {
@@ -204,12 +219,18 @@ void Rope::TranslateRope(float x, float y, float z){
     }
 }
 
+void Rope::SetFixed(unsigned int index, bool fixed){
+    assert(index < m_numParticles);
+    m_points[index].fixed = fixed;
+}
+
 void Rope::SetStepSize(float step){
 
 }
 
-void Rope::SetMass(float mass){
-
+void Rope::SetMass(int index, float mass){
+    m_points[index].mass = mass;
 }
+
 
 };

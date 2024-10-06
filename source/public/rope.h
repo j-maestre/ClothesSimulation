@@ -5,7 +5,10 @@ namespace JE {
 	struct Point {
 		float position[3] = { 0.0f };
 		float previous_position[3] = { 0.0f };
+		float mass = 1.0f;
+		float friction_factor;
 		bool fixed = false;
+
 	};
 
 	struct Vec3 {
@@ -34,7 +37,7 @@ namespace JE {
 		void Update(float dt);
 
 		// First point position and second point position
-		void InitRope(Vec3 first_pos, Vec3 second_pos);
+		void InitRope(Vec3 first_pos, Vec3 second_pos, float mass = 1.0f, float friction_factor = 0.98f);
 
 		// Return position of the given particle
 		void GetPosition(int index, float& x, float& y, float& z);
@@ -43,9 +46,11 @@ namespace JE {
 
 		void TranslateRope(float x, float y, float z);
 
+		void SetFixed(unsigned int index, bool fixed = true);
+
 
 		void SetStepSize(float step);
-		void SetMass(float mass);
+		void SetMass(int index, float mass);
 
 		// You must call constructor and InitRope() in this func
 		virtual void DrawRope() = 0;
@@ -55,9 +60,6 @@ namespace JE {
 		Rope(float lenght, unsigned int particles);
 
 	private:
-
-		// There will be a lot of more varables, maybe a class representing all of the variables or a structure
-		float m_mass = 0.1f;
 
 		float m_timeStep = 0.01f;
 		unsigned int jm_jakobsenIterations = 50;
