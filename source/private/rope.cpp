@@ -34,7 +34,7 @@ void Rope::InitRope(Vec3 first_pos, Vec3 second_pos, float mass, float friction_
         m_points[i].previous_position[2] = z;
         
         m_points[i].mass = mass;
-        m_points[i].friction_factor = friction_factor;
+        m_points[i].friction_factor = friction_factor * 0.1f;
         m_points[i].fixed = i == 0; // We fix only the first point
 
         unsigned numberOfSegments = m_numParticles - 1;
@@ -91,9 +91,9 @@ void Rope::Update(float dt){
 
             yVelocity += gravity_force * m_timeStep;
 
-            //xVelocity *= (1 - m_points[i].friction_factor);
-            //yVelocity *= (1 - m_points[i].friction_factor);
-            //zVelocity *= (1 - m_points[i].friction_factor);
+            xVelocity *= (1 - m_points[i].friction_factor);
+            yVelocity *= (1 - m_points[i].friction_factor);
+            zVelocity *= (1 - m_points[i].friction_factor);
             
             // Update new position using Verlet
             m_points[i].position[0] += xVelocity * m_timeStep;
@@ -223,12 +223,34 @@ void Rope::SetFixed(unsigned int index, bool fixed){
     m_points[index].fixed = fixed;
 }
 
+void Rope::SetAllFriction(float friction){
+
+    if (friction >= 0.0f) {
+
+        for (int i = 0; i < m_numParticles; i++) {
+            m_points[i].friction_factor = friction;
+        }
+    }
+}
+
+void Rope::SetFriction(int index, float friction){
+    if (index >= 0 && friction >= 0.0f) {
+        m_points[index].friction_factor = friction;
+    }
+}
+
 void Rope::SetStepSize(float step){
 
 }
 
 void Rope::SetMass(int index, float mass){
     m_points[index].mass = mass;
+}
+
+void Rope::SetAllMass(float mass){
+    for (int i = 0; i < m_numParticles; i++) {
+        m_points[i].mass = mass;
+    }
 }
 
 

@@ -37,20 +37,21 @@ namespace JE {
 		void Update(float dt);
 
 		// First point position and second point position
-		void InitRope(Vec3 first_pos, Vec3 second_pos, float mass = 1.0f, float friction_factor = 0.98f);
+		void InitRope(Vec3 first_pos, Vec3 second_pos, float mass = 1.0f, float friction_factor = 1.0f);
 
 		// Return position of the given particle
 		void GetPosition(int index, float& x, float& y, float& z);
-
 		void SetPointPosition(int index, float x, float y, float z);
-
 		void TranslateRope(float x, float y, float z);
 
 		void SetFixed(unsigned int index, bool fixed = true);
-
+		
+		void SetFriction(int index, float friction);
+		void SetAllFriction(float friction);
+		void SetMass(int index, float mass);
+		void SetAllMass(float mass);
 
 		void SetStepSize(float step);
-		void SetMass(int index, float mass);
 
 		// You must call constructor and InitRope() in this func
 		virtual void DrawRope() = 0;
