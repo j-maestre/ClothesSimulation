@@ -7,6 +7,7 @@
 
 #include "public/rope_physics.h"
 #include "public/rope_raylib.h"
+#include "public/clothe_raylib.h"
 
 
 int main(int argc, char** argv){
@@ -52,11 +53,13 @@ int main(int argc, char** argv){
     float rope2_mass = 3.0f;
     float rope3_mass = 3.0f;
 
-    rope.InitRope(JE::Vec3{ 0.0f, 5.0f, 0.0f }, JE::Vec3{ 0.0f, 0.0f, 0.0f }, 1.0f, rope1_friction);
-    rope2.InitRope(JE::Vec3{ 0.0f, 5.0f, 0.0f }, JE::Vec3{ 0.0f, 0.0f, 0.0f }, 3.0f, rope2_friction);
+    rope.InitRope(JE::Vec3{ 0.0f, 5.0f, 0.0f }, JE::Vec3{ 0.0f, -5.0f, 0.0f }, 1.0f, rope1_friction);
+    rope2.InitRope(JE::Vec3{ 0.0f, 5.0f, 0.0f }, JE::Vec3{ 0.0f, -5.0f, 0.0f }, 3.0f, rope2_friction);
 
     float rope_3_x_offset = 5.0f;
-    rope3.InitRope(JE::Vec3{ rope_3_x_offset , 5.0f, 0.0f }, JE::Vec3{ rope_3_x_offset , 0.0f, 0.0f }, 3.0f, rope3_friction);
+    rope3.InitRope(JE::Vec3{ rope_3_x_offset , 5.0f, 0.0f }, JE::Vec3{ 0.0f , -5.0f, 0.0f }, 3.0f, rope3_friction);
+
+
     printf("Ropes created correctly!\n");
 
     rope3.SetFixed(99);
@@ -74,6 +77,9 @@ int main(int argc, char** argv){
 
     rlImGuiSetup(true);
 
+
+    JE::ClotheRaylib cloth(0.25f, 10);
+    cloth.InitClothe(10, 0.25f,JE::Vec3{0.0f, 5.0f, 0.0f});
     
     while (!WindowShouldClose()) {
 
@@ -87,8 +93,8 @@ int main(int argc, char** argv){
         BeginMode3D(camera);
 
         float x, y, z;
-        //rope.GetPosition(0,x,y,z);
-        //rope.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
+        rope.GetPosition(0,x,y,z);
+        rope.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
         
         rope2.GetPosition(0,x,y,z);
         rope2.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
@@ -96,10 +102,13 @@ int main(int argc, char** argv){
         rope3.GetPosition(0,x,y,z);
         rope3.SetPointPosition(0, rope_3_x_offset + cosf(GetTime() * speed) * 2.0f,y,z);
 
-        DrawCube(Vector3{-5.0f, 0.0f ,0.0f}, 1.0f, 1.0f, 1.0f, WHITE);
-        DrawLine3D(Vector3{ -5.0f, 0.0f ,0.0f }, Vector3{ 10.0f, 10.0f ,0.0f }, WHITE);
+        // --- Wind turbine ---
+        
+        //DrawCube(Vector3{-5.0f, 0.0f ,0.0f}, 1.0f, 1.0f, 1.0f, WHITE);
+        //DrawLine3D(Vector3{ -5.0f, 0.0f ,0.0f }, Vector3{ 10.0f, 10.0f ,0.0f }, WHITE);
         //rope.ApplyWindTurbine(turbine, GetFrameTime());
 
+        // --------------------
 
         
 
@@ -113,6 +122,8 @@ int main(int argc, char** argv){
             rope.DrawRope();
             rope2.DrawRope();
             rope3.DrawRope();
+
+            cloth.DrawClothe();
         }
             
 

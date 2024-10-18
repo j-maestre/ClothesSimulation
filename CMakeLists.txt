@@ -87,7 +87,7 @@ add_subdirectory(${IMGUI_DIR} EXCLUDE_FROM_ALL)
 # EXECUTABLE
 # ---------------------------------------------------------------------
 # Set the executable of the project
-add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES} "source/private/rope_raylib.cpp" "source/public/rope_raylib.h" "source/public/cloth.h" "source/private/cloth.cpp")
+add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES} "source/private/rope_raylib.cpp" "source/public/rope_raylib.h" "source/public/cloth.h" "source/private/cloth.cpp" "source/public/wind_turbine.h" "source/private/wind_turbine.cpp" "source/public/rope_physics.h" "source/public/clothe_raylib.h" "source/private/cloth_raylib.cpp")
 
 
 # ---------------------------------------------------------------------

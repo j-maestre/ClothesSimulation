@@ -7,24 +7,22 @@
 namespace JE {
 
 
-void Rope::InitRope(Vec3 first_pos, Vec3 second_pos, float mass, float friction_factor){
-        
+void Rope::InitRope(Vec3 first_pos, Vec3 direction, float mass, float friction_factor){
 
-
-    //Rope* rope_tmp = new Rope();
-    //assert(rope_tmp && "new Rope is nullptr");
     
     m_points = new Point[m_numParticles];
     assert(m_points && "New Points is null");
+
+    Vec3 second_pos = first_pos + direction;
 
     for (int i = 0; i < m_numParticles; i++) {
 
         // How close are we to the last point?
         float w = (float)i / (m_numParticles - 1);
 
-        float x = w * second_pos.x + (1 - w) * first_pos.x;
-        float y = w * second_pos.y + (1 - w) * first_pos.y;
-        float z = w * second_pos.z + (1 - w) * first_pos.z;
+        float x = w * second_pos.x + (1.0f - w) * first_pos.x;
+        float y = w * second_pos.y + (1.0f - w) * first_pos.y;
+        float z = w * second_pos.z + (1.0f - w) * first_pos.z;
 
    
         m_points[i].position.x = x;
@@ -47,10 +45,6 @@ void Rope::InitRope(Vec3 first_pos, Vec3 second_pos, float mass, float friction_
 
     }
 
-
-
-
-  
 }
 
 Rope::Rope(float lenght, unsigned int particles) : m_lenght(lenght), m_numParticles(particles){

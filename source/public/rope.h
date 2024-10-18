@@ -14,6 +14,10 @@ class WindTurbine;
 		Vec3 operator-(const Vec3& other) {
 			return {x - other.x, y - other.y, z - other.z};
 		}
+		
+		Vec3 operator+(const Vec3& other) {
+			return {x + other.x, y + other.y, z + other.z};
+		}
 
 		Vec3 operator*(float scalar) const {
 			return { x * scalar, y * scalar, z * scalar };
@@ -32,7 +36,7 @@ class WindTurbine;
 		Vec3 position;
 		Vec3 previous_position;
 		float mass = 1.0f;
-		float friction_factor;
+		float friction_factor = 1.0f;
 		bool fixed = false;
 
 	};
@@ -53,7 +57,7 @@ class WindTurbine;
 		~Rope();
 
 		// First point position and second point position
-		void InitRope(Vec3 first_pos, Vec3 second_pos, float mass = 1.0f, float friction_factor = 1.0f);
+		void InitRope(Vec3 first_pos, Vec3 direction, float mass = 1.0f, float friction_factor = 1.0f);
 
 		// Called every frame
 		void Update(float dt);
