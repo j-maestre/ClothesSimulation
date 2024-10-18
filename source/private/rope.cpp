@@ -1,6 +1,8 @@
 #include "public/rope.h"
+#include "public/wind_turbine.h"
 #include <assert.h>
 #include <math.h>
+#include <stdio.h>
 
 namespace JE {
 
@@ -25,19 +27,19 @@ void Rope::InitRope(Vec3 first_pos, Vec3 second_pos, float mass, float friction_
         float z = w * second_pos.z + (1 - w) * first_pos.z;
 
    
-        m_points[i].position[0] = x;
-        m_points[i].position[1] = y;
-        m_points[i].position[2] = z;
+        m_points[i].position.x = x;
+        m_points[i].position.y = y;
+        m_points[i].position.z = z;
 
-        m_points[i].previous_position[0] = x;
-        m_points[i].previous_position[1] = y;
-        m_points[i].previous_position[2] = z;
+        m_points[i].previous_position.x = x;
+        m_points[i].previous_position.y = y;
+        m_points[i].previous_position.z = z;
         
         m_points[i].mass = mass;
         m_points[i].friction_factor = friction_factor * 0.1f;
         m_points[i].fixed = i == 0; // We fix only the first point
 
-        unsigned numberOfSegments = m_numParticles - 1;
+        //unsigned int numberOfSegments = m_numParticles - 1;
 
         float ropeLength = sqrt(pow(first_pos.x - second_pos.x, 2) + pow(first_pos.y - second_pos.y, 2) + pow(first_pos.z - second_pos.z, 2));
         m_desiredDistance = ropeLength / (m_numParticles - 1);
@@ -76,15 +78,15 @@ void Rope::Update(float dt){
     // Verlet integration    
     for (int i = 0; i < m_numParticles; i++) {
         if (!m_points[i].fixed) {
-            float x_tmp = m_points[i].position[0];
-            float y_tmp = m_points[i].position[1];
-            float z_tmp = m_points[i].position[2];
+            float x_tmp = m_points[i].position.x;
+            float y_tmp = m_points[i].position.y;
+            float z_tmp = m_points[i].position.z;
 
 
             // Calculating previous velocity
-            float xVelocity = (m_points[i].position[0] - m_points[i].previous_position[0]) / m_timeStep;
-            float yVelocity = (m_points[i].position[1] - m_points[i].previous_position[1]) / m_timeStep;
-            float zVelocity = (m_points[i].position[2] - m_points[i].previous_position[2]) / m_timeStep;
+            float xVelocity = (m_points[i].position.x - m_points[i].previous_position.x) / m_timeStep;
+            float yVelocity = (m_points[i].position.y - m_points[i].previous_position.y) / m_timeStep;
+            float zVelocity = (m_points[i].position.z - m_points[i].previous_position.z) / m_timeStep;
 
             float gravity_force = m_gravity * m_points[i].mass;
             float acceleration_y = gravity_force / m_points[i].mass;
@@ -96,9 +98,9 @@ void Rope::Update(float dt){
             zVelocity *= (1 - m_points[i].friction_factor);
             
             // Update new position using Verlet
-            m_points[i].position[0] += xVelocity * m_timeStep;
-            m_points[i].position[1] += yVelocity * m_timeStep;
-            m_points[i].position[2] += zVelocity * m_timeStep;
+            m_points[i].position.x += xVelocity * m_timeStep;
+            m_points[i].position.y += yVelocity * m_timeStep;
+            m_points[i].position.z += zVelocity * m_timeStep;
 
             // Calculating instant velocity
             //float xInstantVelocity = xVelocity + 0 * m_timeStep;
@@ -114,9 +116,9 @@ void Rope::Update(float dt){
             // Z value
             // m_points[i].position[2] = 2.0f * m_points[i].position[2] - m_points[i].previous_position[2] * (m_timeStep * m_timeStep) * dt;
 
-            m_points[i].previous_position[0] = x_tmp;
-            m_points[i].previous_position[1] = y_tmp;
-            m_points[i].previous_position[2] = z_tmp;
+            m_points[i].previous_position.x = x_tmp;
+            m_points[i].previous_position.y = y_tmp;
+            m_points[i].previous_position.z = z_tmp;
         }
     }
 
@@ -128,13 +130,13 @@ void Rope::Update(float dt){
             Point& previous = m_points[i - 1];
             Point& actual = m_points[i];
         
-            float distance = sqrt(pow(previous.position[0] - actual.position[0], 2) + pow(previous.position[1] - actual.position[1], 2));
+            float distance = sqrt(pow(previous.position.x - actual.position.x, 2) + pow(previous.position.y - actual.position.y, 2));
             float distanceError = distance - m_desiredDistance;
 
              // The direction in which particles should be pulled or pushed
-            float xDifference = actual.position[0] - previous.position[0];
-            float yDifference = actual.position[1] - previous.position[1];
-            float zDifference = actual.position[2] - previous.position[2];
+            float xDifference = actual.position.x - previous.position.x;
+            float yDifference = actual.position.y - previous.position.y;
+            float zDifference = actual.position.z - previous.position.z;
 
             // Make unit vector
             float distanceSquared = (xDifference * xDifference) + (yDifference * yDifference) + (zDifference * zDifference);
@@ -154,29 +156,29 @@ void Rope::Update(float dt){
                 if (previous.fixed && !actual.fixed) {
                     // First with the second
 
-                    actual.position[0] -= correction_factor_previous * (xDirection * distanceError);
-                    actual.position[1] -= correction_factor_previous * (yDirection * distanceError);
-                    actual.position[2] -= correction_factor_previous * (zDirection * distanceError);
+                    actual.position.x -= correction_factor_previous * (xDirection * distanceError);
+                    actual.position.y -= correction_factor_previous * (yDirection * distanceError);
+                    actual.position.z -= correction_factor_previous * (zDirection * distanceError);
 
                 }
                 else if (actual.fixed && !previous.fixed) {
                     // Second with the first
 
-                    previous.position[0] += correction_factor_actual * (xDirection * distanceError);
-                    previous.position[1] += correction_factor_actual * (yDirection * distanceError);
-                    previous.position[2] += correction_factor_actual * (zDirection * distanceError);
+                    previous.position.x += correction_factor_actual * (xDirection * distanceError);
+                    previous.position.y += correction_factor_actual * (yDirection * distanceError);
+                    previous.position.z += correction_factor_actual * (zDirection * distanceError);
 
                 }
                 else if (!previous.fixed && !actual.fixed) {
                     // All except first
 
-                    actual.position[0] -= 0.5 * (xDirection * distanceError);
-                    actual.position[1] -= 0.5 * (yDirection * distanceError);
-                    actual.position[2] -= 0.5f * (zDirection * distanceError);
+                    actual.position.x -= 0.5 * (xDirection * distanceError);
+                    actual.position.y -= 0.5 * (yDirection * distanceError);
+                    actual.position.z -= 0.5f * (zDirection * distanceError);
 
-                    previous.position[0] += 0.5 * (xDirection * distanceError);
-                    previous.position[1] += 0.5 * (yDirection * distanceError);
-                    previous.position[2] += 0.5f * (zDirection * distanceError);
+                    previous.position.x += 0.5 * (xDirection * distanceError);
+                    previous.position.y += 0.5 * (yDirection * distanceError);
+                    previous.position.z += 0.5f * (zDirection * distanceError);
                 }
             }
             //float xDirection = xDifference / sqrt(pow(xDifference, 2) + pow(yDifference, 2));
@@ -190,31 +192,69 @@ void Rope::Update(float dt){
 
 }
 
+
+void Rope::ApplyWindTurbine(WindTurbine wind, float dt){
+    for (int i = 0; i < m_numParticles; i++) {
+        Point& point = m_points[i];
+
+        // Vector desde el origen del viento hacia el punto de la cuerda
+        Vec3 pointToWindOrigin = point.position - wind.m_position;
+
+        // Proyección del punto en la dirección del viento
+        float distanceAlongWind = pointToWindOrigin.Dot(wind.m_direction);
+
+        // Verificar si el punto está dentro del alcance del viento
+        if (distanceAlongWind > 0 && distanceAlongWind < wind.m_maxDistance) {
+            // Ángulo entre la dirección del viento y el punto
+            Vec3 projectedPoint = pointToWindOrigin - (wind.m_direction * distanceAlongWind);
+            float distanceFromCenter = projectedPoint.Length();
+
+            // Si está dentro del ángulo de expansión del viento
+            float maxRadiusAtDistance = distanceAlongWind * tan(wind.m_spreadAngle);
+            if (distanceFromCenter < maxRadiusAtDistance) {
+                // Calcular la fuerza del viento que afecta al punto
+                float distanceFactor = 1.0f - (distanceAlongWind / wind.m_maxDistance);
+                float windForce = wind.m_strength * distanceFactor;
+
+                // Aplicar la fuerza en la dirección del viento
+                Vec3 force = wind.m_direction * windForce;
+
+                // Aumentar la velocidad del punto de la cuerda con esta fuerza (proporcional a su masa)
+                // Multiplicar por dt para aplicar la fuerza proporcional al tiempo
+                point.position.x += force.x * dt / point.mass; // Ajustado para fuerza
+                point.position.y += force.y * dt / point.mass; // Ajustado para fuerza
+                point.position.z += force.z * dt / point.mass; // Ajustado para fuerza
+            }
+        }
+    }
+
+}
+
 void Rope::GetPosition(int index, float& x, float& y, float& z){
 
-    x = m_points[index].position[0];
-    y = m_points[index].position[1];
-    z = m_points[index].position[2];
+    x = m_points[index].position.x;
+    y = m_points[index].position.y;
+    z = m_points[index].position.z;
 }
 
 void Rope::SetPointPosition(int index, float x, float y, float z){
 
-    m_points[index].position[0] = x;
-    m_points[index].position[1] = y;
-    m_points[index].position[2] = z;
+    m_points[index].position.x = x;
+    m_points[index].position.y = y;
+    m_points[index].position.z = z;
 
 }
 
 void Rope::TranslateRope(float x, float y, float z){
 
     for (int i = 0; i < m_numParticles; i++) {
-        m_points[i].position[0] = x;
-        m_points[i].position[1] = x;
-        m_points[i].position[2] = x;
+        m_points[i].position.x = x;
+        m_points[i].position.y = y;
+        m_points[i].position.z = z;
         
-        m_points[i].previous_position[0] = x;
-        m_points[i].previous_position[1] = x;
-        m_points[i].previous_position[2] = x;
+        m_points[i].previous_position.x = x;
+        m_points[i].previous_position.y = y;
+        m_points[i].previous_position.z = z;
     }
 }
 

@@ -4,6 +4,8 @@
 #include <rlImGui.h>
 #include "imgui_impl_raylib.h"
 #include "imgui.h"
+
+#include "public/rope_physics.h"
 #include "public/rope_raylib.h"
 
 
@@ -67,6 +69,9 @@ int main(int argc, char** argv){
 
     const float speed = 2.0f;
 
+    //Vec3 position, Vec3 direction, float strength, float spread_angle, float max_distance, bool enabled = true
+    JE::WindTurbine turbine(JE::Vec3{ 0.1f, 0.1f, 0.1f }, JE::Vec3{1.0f, 1.0f, 0.1f}, 50.0f, 50.0f, 10.0f);
+
     rlImGuiSetup(true);
 
     
@@ -82,14 +87,18 @@ int main(int argc, char** argv){
         BeginMode3D(camera);
 
         float x, y, z;
-        rope.GetPosition(0,x,y,z);
-        rope.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
+        //rope.GetPosition(0,x,y,z);
+        //rope.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
         
         rope2.GetPosition(0,x,y,z);
         rope2.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
         
         rope3.GetPosition(0,x,y,z);
         rope3.SetPointPosition(0, rope_3_x_offset + cosf(GetTime() * speed) * 2.0f,y,z);
+
+        DrawCube(Vector3{-5.0f, 0.0f ,0.0f}, 1.0f, 1.0f, 1.0f, WHITE);
+        DrawLine3D(Vector3{ -5.0f, 0.0f ,0.0f }, Vector3{ 10.0f, 10.0f ,0.0f }, WHITE);
+        //rope.ApplyWindTurbine(turbine, GetFrameTime());
 
 
         

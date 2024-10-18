@@ -1,22 +1,41 @@
 #pragma once
+#include "math.h"
 
 namespace JE {
 
+class WindTurbine;
+
+
+	struct Vec3 {
+		float x = 0.0f;
+		float y = 0.0f;
+		float z = 0.0f;
+
+		Vec3 operator-(const Vec3& other) {
+			return {x - other.x, y - other.y, z - other.z};
+		}
+
+		Vec3 operator*(float scalar) const {
+			return { x * scalar, y * scalar, z * scalar };
+		}
+
+		float Dot(const Vec3& other) const {
+			return (x * other.x) + (y * other.y) + (z * other.z);
+		}
+
+		float Length() const {
+			return sqrt(Dot(*this));
+		}
+	};
+
 	struct Point {
-		float position[3] = { 0.0f };
-		float previous_position[3] = { 0.0f };
+		Vec3 position;
+		Vec3 previous_position;
 		float mass = 1.0f;
 		float friction_factor;
 		bool fixed = false;
 
 	};
-
-	struct Vec3 {
-		float x;
-		float y;
-		float z;
-	};
-
 
 	class Rope {
 
@@ -33,11 +52,13 @@ namespace JE {
 		Rope(Rope&&);
 		~Rope();
 
+		// First point position and second point position
+		void InitRope(Vec3 first_pos, Vec3 second_pos, float mass = 1.0f, float friction_factor = 1.0f);
+
 		// Called every frame
 		void Update(float dt);
 
-		// First point position and second point position
-		void InitRope(Vec3 first_pos, Vec3 second_pos, float mass = 1.0f, float friction_factor = 1.0f);
+		void ApplyWindTurbine(WindTurbine w, float dt);
 
 		// Return position of the given particle
 		void GetPosition(int index, float& x, float& y, float& z);
@@ -53,7 +74,6 @@ namespace JE {
 
 		void SetStepSize(float step);
 
-		// You must call constructor and InitRope() in this func
 		virtual void DrawRope() = 0;
 
 	protected:
