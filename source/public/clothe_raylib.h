@@ -5,7 +5,7 @@ namespace JE {
 
 	class ClotheRaylib : public Cloth {
 		public:
-			ClotheRaylib(float lenght_per_rope, unsigned int particles_per_rope);
+			ClotheRaylib(unsigned int rows, unsigned int columns, float length_x, float lenght_y);
 			ClotheRaylib(const ClotheRaylib&);
 			ClotheRaylib(ClotheRaylib&&);
 			~ClotheRaylib();

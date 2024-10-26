@@ -70,16 +70,25 @@ int main(int argc, char** argv){
 
     //printf("Lenght-> %f\n Num particles %d", rope.m_lenght, rope.m_numParticles);
 
-    const float speed = 2.0f;
+    float speed = 2.0f;
+    float amplitude = 2.0f;
 
     //Vec3 position, Vec3 direction, float strength, float spread_angle, float max_distance, bool enabled = true
-    JE::WindTurbine turbine(JE::Vec3{ 0.1f, 0.1f, 0.1f }, JE::Vec3{1.0f, 1.0f, 0.1f}, 50.0f, 50.0f, 10.0f);
+    //JE::WindTurbine turbine(JE::Vec3{ 0.1f, 0.1f, 0.1f }, JE::Vec3{1.0f, 1.0f, 0.1f}, 50.0f, 50.0f, 10.0f);
 
     rlImGuiSetup(true);
 
+    unsigned int rows = 20;
+    unsigned int cols = 20;
 
-    JE::ClotheRaylib cloth(0.25f, 10);
-    cloth.InitClothe(10, 0.25f,JE::Vec3{0.0f, 5.0f, 0.0f});
+    JE::ClotheRaylib cloth(rows, cols, 5.0f, 5.0f);
+    cloth.InitClothe(JE::Vec3{ 0.0f, 5.0f, 0.0f }, 10.0f, 0.1f);
+
+    cloth.SetFixed(0,0);
+    cloth.SetFixed(cols - 1,0);
+
+    float x_offset, y_offset, z_offset;
+    cloth.GetPosition(0, 11, x_offset, y_offset, z_offset);
     
     while (!WindowShouldClose()) {
 
@@ -93,14 +102,17 @@ int main(int argc, char** argv){
         BeginMode3D(camera);
 
         float x, y, z;
-        rope.GetPosition(0,x,y,z);
-        rope.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
+        //rope.GetPosition(0,x,y,z);
+        //rope.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
         
-        rope2.GetPosition(0,x,y,z);
-        rope2.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
+        //rope2.GetPosition(0,x,y,z);
+        //rope2.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
         
-        rope3.GetPosition(0,x,y,z);
-        rope3.SetPointPosition(0, rope_3_x_offset + cosf(GetTime() * speed) * 2.0f,y,z);
+        //rope3.GetPosition(0,x,y,z);
+        //rope3.SetPointPosition(0, rope_3_x_offset + cosf(GetTime() * speed) * 2.0f,y,z);
+
+        cloth.GetPosition(0, cols - 1, x,y,z);
+        cloth.SetPosition(0, cols - 1, x_offset + (cosf(GetTime() * speed) * amplitude), y, z);
 
         // --- Wind turbine ---
         
@@ -110,21 +122,30 @@ int main(int argc, char** argv){
 
         // --------------------
 
+
         
 
         if (GetTime() > 2.0f) {
 
         //if (IsKeyDown(KEY_SPACE)) {
-            rope.Update(GetFrameTime());
-            rope2.Update(GetFrameTime());
-            rope3.Update(GetFrameTime());
+            //rope.Update(GetFrameTime());
+            //rope2.Update(GetFrameTime());
+            //rope3.Update(GetFrameTime());
         //}
-            rope.DrawRope();
-            rope2.DrawRope();
-            rope3.DrawRope();
+            //rope.DrawRope();
+            //rope2.DrawRope();
+            //rope3.DrawRope();
 
+            cloth.Update(GetFrameTime());
             cloth.DrawClothe();
+
         }
+
+        /*float tmp_x, tmp_y, tmp_z;
+        cloth.GetPosition(0, 0, tmp_x, tmp_y, tmp_z);
+        printf("First x:%f y:%f, z:%f\n", tmp_x, tmp_y, tmp_z);
+        cloth.GetPosition(1, 0, tmp_x, tmp_y, tmp_z);
+        printf("Second x:%f y:%f, z:%f\n", tmp_x, tmp_y, tmp_z);*/
             
 
 
@@ -139,6 +160,11 @@ int main(int argc, char** argv){
         rlImGuiBegin();
 
         
+        if (ImGui::CollapsingHeader("General values")) {
+            ImGui::DragFloat("Speed", &speed, 0.01f, 0.0f, 10.0f);
+            ImGui::DragFloat("Amplitude", &amplitude, 0.01f, 0.0f, 10.0f);
+        }
+
         if (ImGui::CollapsingHeader("Rope 1")) {
             ImGui::DragFloat("Friction 1", &rope1_friction, 0.001f, 0.0f, 2.0f);
             ImGui::DragFloat("Mass 1", &rope1_mass, 0.01f, 0.0f, 10.0f);
@@ -160,6 +186,7 @@ int main(int argc, char** argv){
             rope3.SetAllFriction(rope3_friction);
             rope3.SetAllMass(rope3_mass);
         }
+
 
         ImGui::ShowDemoWindow();
 

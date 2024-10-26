@@ -4,7 +4,7 @@
 
 namespace JE {
 
-	ClotheRaylib::ClotheRaylib(float lenght_per_rope, unsigned int particles_per_rope) : Cloth(lenght_per_rope, particles_per_rope){
+	ClotheRaylib::ClotheRaylib(unsigned int rows, unsigned int columns, float length_x, float length_y) : Cloth(rows, columns, length_x, length_y){
 
 	}
 
