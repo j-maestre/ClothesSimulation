@@ -16,7 +16,7 @@ namespace JE{
 
     inline void Cloth::UpdateJaksobenParticlesPair(Cloth& cloth, Point* previous, Point* actual, float dt) {
 
-            float distance = sqrt(pow(previous->position.x - actual->position.x, 2) + pow(previous->position.y - actual->position.y, 2));
+            float distance = sqrtf(pow(previous->position.x - actual->position.x, 2.0f) + pow(previous->position.y - actual->position.y, 2.0f));
             float distanceError = distance - cloth.m_desired_distance_per_rope;
 
             // The direction in which particles should be pulled or pushed
@@ -26,9 +26,11 @@ namespace JE{
 
             // Make unit vector
             float distanceSquared = (xDifference * xDifference) + (yDifference * yDifference) + (zDifference * zDifference);
+            //float distanceSquared = (xDifference + yDifference + zDifference);
 
             if (distanceSquared > 0.0f) {
-                float distance = sqrt(distanceSquared);
+                float distance = sqrtf(distanceSquared);
+                //float distance = distanceSquared;
 
                 float xDirection = xDifference / distance;
                 float yDirection = yDifference / distance;
@@ -40,35 +42,32 @@ namespace JE{
 
 
                 if (previous->fixed && !actual->fixed) {
-                    // First with the second
 
                     actual->position.x -= correction_factor_previous * (xDirection * distanceError);
                     actual->position.y -= correction_factor_previous * (yDirection * distanceError);
                     actual->position.z -= correction_factor_previous * (zDirection * distanceError);
 
-                }
-                else if (actual->fixed && !previous->fixed) {
-                    // Second with the first
+                }else if (actual->fixed && !previous->fixed) {
 
                     previous->position.x += correction_factor_actual * (xDirection * distanceError);
                     previous->position.y += correction_factor_actual * (yDirection * distanceError);
                     previous->position.z += correction_factor_actual * (zDirection * distanceError);
 
-                }
-                else if (!previous->fixed && !actual->fixed) {
-                    // All except first
+                }else if (!previous->fixed && !actual->fixed) {
+    
+                    float x_distance = 0.5f * (xDirection * distanceError);
+                    float y_distance = 0.5f * (yDirection * distanceError);
+                    float z_distance = 0.5f * (zDirection * distanceError);
 
-                    actual->position.x -= 0.5 * (xDirection * distanceError);
-                    actual->position.y -= 0.5 * (yDirection * distanceError);
-                    actual->position.z -= 0.5f * (zDirection * distanceError);
+                    actual->position.x -= x_distance;
+                    actual->position.y -= y_distance;
+                    actual->position.z -= z_distance;
 
-                    previous->position.x += 0.5 * (xDirection * distanceError);
-                    previous->position.y += 0.5 * (yDirection * distanceError);
-                    previous->position.z += 0.5f * (zDirection * distanceError);
+                    previous->position.x += x_distance;
+                    previous->position.y += y_distance;
+                    previous->position.z += z_distance;
                 }
             }
-            //float xDirection = xDifference / sqrt(pow(xDifference, 2) + pow(yDifference, 2));
-            //float yDirection = yDifference / sqrt(pow(xDifference, 2) + pow(yDifference, 2));
         
     }
     
