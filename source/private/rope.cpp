@@ -96,20 +96,6 @@ void Rope::Update(float dt){
             m_points[i].position.y += yVelocity * m_timeStep;
             m_points[i].position.z += zVelocity * m_timeStep;
 
-            // Calculating instant velocity
-            //float xInstantVelocity = xVelocity + 0 * m_timeStep;
-            //float yInstantVelocity = yVelocity + m_gravity * m_timeStep;
-
-            // Taking the mean of the two
-            //float xTrueVelocity = (xVelocity + xInstantVelocity) / 2.0f;
-            //float yTrueVelocity = (yVelocity + yInstantVelocity) / 2.0f;
-
-            // Updating particle's position
-            //m_points[i].position[0] += xTrueVelocity * m_timeStep;
-            //m_points[i].position[1] += yTrueVelocity * m_timeStep;
-            // Z value
-            // m_points[i].position[2] = 2.0f * m_points[i].position[2] - m_points[i].previous_position[2] * (m_timeStep * m_timeStep) * dt;
-
             m_points[i].previous_position.x = x_tmp;
             m_points[i].previous_position.y = y_tmp;
             m_points[i].previous_position.z = z_tmp;
@@ -181,8 +167,6 @@ void Rope::Update(float dt){
             
         }
     }
-
-
 
 }
 
