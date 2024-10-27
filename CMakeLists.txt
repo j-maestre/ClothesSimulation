@@ -72,6 +72,9 @@ set(INSTALLATION_PATH ${PROJECT_SOURCE_DIR}/installation)
 # Set the C++ standard to 20
 set(CMAKE_CXX_STANDARD 20)
 
+# Activate release optimization
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /FAcs")
+
 
 # ---------------------------------------------------------------------
 # DEPENDENCIES
