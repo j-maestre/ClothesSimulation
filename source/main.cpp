@@ -10,6 +10,8 @@
 #include "public/clothe_raylib.h"
 
 
+//#define SHOW_ROPES
+
 int main(int argc, char** argv){
 
     // Inicializar la ventana
@@ -70,7 +72,7 @@ int main(int argc, char** argv){
 
     //printf("Lenght-> %f\n Num particles %d", rope.m_lenght, rope.m_numParticles);
 
-    float speed = 2.0f;
+    float speed = 10.0f;
     float amplitude = 2.0f;
 
     //Vec3 position, Vec3 direction, float strength, float spread_angle, float max_distance, bool enabled = true
@@ -82,14 +84,38 @@ int main(int argc, char** argv){
     unsigned int cols = 20;
 
     JE::ClotheRaylib cloth(rows, cols, 5.0f, 5.0f);
+    JE::ClotheRaylib courtain1(rows, cols, 10.0f, 10.0f);
+    JE::ClotheRaylib courtain2(rows, cols, 10.0f, 10.0f);
+
     cloth.InitClothe(JE::Vec3{ 0.0f, 5.0f, 0.0f }, 10.0f, 0.1f);
+    courtain1.InitClothe(JE::Vec3{ 10.0f, 5.0f, 10.0f }, 10.0f, 0.1f);
+    courtain2.InitClothe(JE::Vec3{ 20.0f, 5.0f, 10.0f }, 10.0f, 0.1f);
+
+    courtain1.SetColor(BLUE);
+
+
 
     cloth.SetFixed(0,0);
     cloth.SetFixed(cols - 1,0);
+    
+    courtain1.SetFixed(0,0);
+    courtain1.SetFixed(cols - 1,0);
+
+    courtain2.SetFixed(0,0);
+    courtain2.SetFixed(cols - 1,0);
 
     float x_offset, y_offset, z_offset;
     cloth.GetPosition(0, 11, x_offset, y_offset, z_offset);
     
+    bool opening = false;
+    bool closing = false;
+    float courtain1_desired_x = 12.5f;
+    float courtain2_desired_x = 27.5f;
+
+    float courtain1_original_x = 20.0f;
+    float courtain2_original_x = 20.0f;
+    float courtains_speed = 7.5f;
+
     while (!WindowShouldClose()) {
 
         if (IsKeyDown(KEY_LEFT_CONTROL)){
@@ -102,17 +128,19 @@ int main(int argc, char** argv){
         BeginMode3D(camera);
 
         float x, y, z;
-        //rope.GetPosition(0,x,y,z);
-        //rope.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
+#ifdef SHOW_ROPES
+        rope.GetPosition(0,x,y,z);
+        rope.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
         
-        //rope2.GetPosition(0,x,y,z);
-        //rope2.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
+        rope2.GetPosition(0,x,y,z);
+        rope2.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
         
-        //rope3.GetPosition(0,x,y,z);
-        //rope3.SetPointPosition(0, rope_3_x_offset + cosf(GetTime() * speed) * 2.0f,y,z);
+        rope3.GetPosition(0,x,y,z);
+        rope3.SetPointPosition(0, rope_3_x_offset + cosf(GetTime() * speed) * 2.0f,y,z);
+#endif
 
-        cloth.GetPosition(0, cols - 1, x,y,z);
-        cloth.SetPosition(0, cols - 1, x_offset + (cosf(GetTime() * speed) * amplitude), y, z);
+        cloth.GetPosition(cols - 1, 0, x,y,z);
+        cloth.SetPosition(cols - 1, 0, x_offset + (cosf(GetTime() * speed) * amplitude), y, z);
 
         // --- Wind turbine ---
         
@@ -122,22 +150,72 @@ int main(int argc, char** argv){
 
         // --------------------
 
+        if (IsKeyPressed(KEY_SPACE)) {
+            opening = true;
+            closing = false;
+        }
+        if (IsKeyPressed(KEY_C)) {
+            //printf("CLOSING\n");
+            opening = false;
+            closing = true;
+        }
+
+
+        if (opening) {
+            courtain1.GetPosition(cols - 1,0,x,y,z);
+            //x = Lerp(x,courtain1_desired_x, 0.1f);
+            if (x >= courtain1_desired_x) x -= courtains_speed * GetFrameTime();
+            //printf("Opening Courtain1 moving from posx: %f to %f\n",x, courtain1_desired_x);
+            courtain1.SetPosition(cols - 1, 0,x,y,z); 
+
+            courtain2.GetPosition(0,0,x,y,z);
+            //x = Lerp(x,courtain2_desired_x, 0.1f);
+            if (x <= courtain2_desired_x) x += courtains_speed * GetFrameTime();
+            //printf("Opening Courtain2 posx: %f\n",x);
+            courtain2.SetPosition(0,0,x,y,z);
+        }
+
+        if (closing) {
+            courtain1.GetPosition(cols - 1, 0, x, y, z);
+            //x = Lerp(x,courtain1_desired_x, 0.1f);
+            if (x <= courtain1_original_x) x += courtains_speed * GetFrameTime();
+            //printf("Closing Courtain1 from posx: %f to %f\n",x, courtain1_original_x);
+            courtain1.SetPosition(cols - 1, 0, x, y, z);
+
+            courtain2.GetPosition(0, 0, x, y, z);
+            //x = Lerp(x,courtain2_desired_x, 0.1f);
+            //printf("Closing Courtain2 posx: %f\n", x);
+            if (x >= courtain2_original_x) x -= courtains_speed * GetFrameTime();
+         
+            courtain2.SetPosition(0, 0, x, y, z);
+        }
+
 
         
 
         if (GetTime() > 2.0f) {
 
-        //if (IsKeyDown(KEY_SPACE)) {
-            //rope.Update(GetFrameTime());
-            //rope2.Update(GetFrameTime());
-            //rope3.Update(GetFrameTime());
-        //}
-            //rope.DrawRope();
-            //rope2.DrawRope();
-            //rope3.DrawRope();
+#ifdef SHOW_ROPES
 
-            cloth.Update(GetFrameTime());
-            cloth.DrawClothe();
+        //if (IsKeyDown(KEY_SPACE)) {
+            rope.Update(GetFrameTime());
+            rope2.Update(GetFrameTime());
+            rope3.Update(GetFrameTime());
+        //}
+            rope.DrawRope();
+            rope2.DrawRope();
+            rope3.DrawRope();
+#endif
+
+            //cloth.Update(GetFrameTime());
+            //cloth.DrawClothe();
+
+            courtain1.Update(GetFrameTime());
+            courtain1.DrawClothe();
+            
+            courtain2.Update(GetFrameTime());
+            courtain2.DrawClothe();
+
 
         }
 
@@ -186,9 +264,6 @@ int main(int argc, char** argv){
             rope3.SetAllFriction(rope3_friction);
             rope3.SetAllMass(rope3_mass);
         }
-
-
-        ImGui::ShowDemoWindow();
 
         rlImGuiEnd();
 
