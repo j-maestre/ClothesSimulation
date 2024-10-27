@@ -16,7 +16,7 @@ namespace JE{
 
     inline void Cloth::UpdateJaksobenParticlesPair(Cloth& cloth, Point* previous, Point* actual, float dt) {
 
-            float distance = sqrtf(pow(previous->position.x - actual->position.x, 2.0f) + pow(previous->position.y - actual->position.y, 2.0f));
+            float distance = sqrtf(pow(previous->position.x - actual->position.x, 2.0f) + pow(previous->position.y - actual->position.y, 2.0f) + pow(previous->position.z - actual->position.z, 2.0f));
             float distanceError = distance - cloth.m_desired_distance_per_rope;
 
             // The direction in which particles should be pulled or pushed
@@ -113,7 +113,7 @@ namespace JE{
                 // float x = w * second_pos.x + (1.0f - w) * first_pos.x;
                 float x = first_pos.x + (m_desired_distance_per_rope * col);
                 float y = current_row_pos.y;
-                float z = first_pos.z;
+                float z = first_pos.z; // +(m_desired_distance_per_rope * col);
 
                 // Asigna la posición calculada al punto
                 m_ropes[row][col].position = Vec3(x, y, z);
@@ -131,17 +131,17 @@ namespace JE{
     }
 
 
-    void Cloth::GetPosition(unsigned int row, unsigned int index, float& x, float& y, float& z){
+    void Cloth::GetPosition(unsigned int posx, unsigned int posy, float& x, float& y, float& z){
 
-        x = m_ropes[row][index].position.x;
-        y = m_ropes[row][index].position.y;
-        z = m_ropes[row][index].position.z;
+        x = m_ropes[posy][posx].position.x;
+        y = m_ropes[posy][posx].position.y;
+        z = m_ropes[posy][posx].position.z;
     }
 
-    void Cloth::SetPosition(unsigned int row, unsigned int index, float x, float y, float z){
-        m_ropes[row][index].position.x = x;
-        m_ropes[row][index].position.y = y;
-        m_ropes[row][index].position.z = z;
+    void Cloth::SetPosition(unsigned int posx, unsigned int posy, float x, float y, float z){
+        m_ropes[posy][posx].position.x = x;
+        m_ropes[posy][posx].position.y = y;
+        m_ropes[posy][posx].position.z = z;
     }
 
     void Cloth::SetFixed(unsigned int x, unsigned int y, bool fixed){
@@ -175,6 +175,28 @@ namespace JE{
 
         // Jakobsen Horizontal
         for (int iterations = 0; iterations < m_jakobsenIterations; iterations++) {
+
+            /*
+            for (int y = 0; y < m_rows; y++) {
+                for (int x = 0; x < m_num_particles_per_rope; x++) {
+
+                    if (x > 0) {
+                        Point* previous = &m_ropes[y][x - 1];
+                        Point* current = &m_ropes[y][x];
+                        UpdateJaksobenParticlesPair(*this, previous, current, dt);
+                    }
+                    
+                    if (y > 0) {
+
+                        Point* previous = &m_ropes[y - 1][x];
+                        Point* current = &m_ropes[y][x];
+                        UpdateJaksobenParticlesPair(*this, previous, current, dt);
+                    }
+                }
+            }
+            */
+
+            
             // Restringir distancias horizontales (entre puntos en una misma fila)
             for (unsigned int y = 0; y < m_rows; y++) {
                 for (int x = 1; x < m_num_particles_per_rope; x++) {
@@ -192,6 +214,7 @@ namespace JE{
                     UpdateJaksobenParticlesPair(*this, previous, current, dt);
                 }
             }
+            
         }
     }
 
