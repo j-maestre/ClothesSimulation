@@ -24,6 +24,14 @@ int main(int argc, char** argv){
     //SetWindowState(FLAG_FULLSCREEN_MODE);
     //HideCursor();
     //ShowCursor();
+    int refresh_rate = GetMonitorPhysicalHeight(0);
+
+    const char* monitor_name = GetMonitorName(0);
+    printf("%s Refresh Rate: %d\n", monitor_name, refresh_rate);
+
+    //const char* glVersion =  GetGraphicsDevice().glVersion;
+    //printf("Versión de OpenGL: %s\n", glVersion);
+
     
     // Definir la c�mara
     Camera camera = { 0 };
@@ -115,6 +123,9 @@ int main(int argc, char** argv){
     float courtain1_original_x = 20.0f;
     float courtain2_original_x = 20.0f;
     float courtains_speed = 7.5f;
+
+
+    cloth.SetTexture("assets/texture_0.png");
 
     while (!WindowShouldClose()) {
 

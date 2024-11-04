@@ -1,15 +1,19 @@
 #include "public/clothe_raylib.h"
 #include "public/cloth.h"
 #include "raylib.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 namespace JE {
 
 	ClotheRaylib::ClotheRaylib(unsigned int rows, unsigned int columns, float length_x, float length_y) : Cloth(rows, columns, length_x, length_y){
 
+
 	}
 
-	ClotheRaylib::~ClotheRaylib()
-	{
+	ClotheRaylib::~ClotheRaylib(){
+		UnloadTexture(m_tex);
 	}
 
 	void ClotheRaylib::SetColor(Color color){
@@ -42,6 +46,30 @@ namespace JE {
 				}
 			}
 		}
+	}
+
+	bool ClotheRaylib::SetTexture(const char* path){
+		
+		bool ret = false;
+		if (path != nullptr) {
+			m_tex = LoadTexture(path);
+			if (m_tex.id != 0) ret = true;
+		}
+
+
+		return ret;
+	}
+
+	std::string ClotheRaylib::readShaderCode(const char* filename) {
+		std::ifstream file(filename);
+		std::stringstream buffer;
+		buffer << file.rdbuf();
+		return buffer.str();
+	}
+
+	bool ClotheRaylib::compileShader(const char* filename, GLenum shaderType){
+
+		return false;
 	}
 
 }

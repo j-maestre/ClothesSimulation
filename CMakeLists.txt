@@ -31,6 +31,8 @@ set(RAYLIB_DIR ${PROJECT_SOURCE_DIR}/deps/raylib)
 set(IMGUI_DIR ${PROJECT_SOURCE_DIR}/deps/imgui)
 # Get the path to rlImGui
 set(RLIMGUI_DIR ${PROJECT_SOURCE_DIR}/deps/rlImGui)
+# Get path to glew
+set(GLEW_DIR ${PROJECT_SOURCE_DIR}/deps/glew-2.1.0)
 # Get thr path to the source
 set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/source)
 
@@ -56,6 +58,7 @@ list(APPEND SOURCE_FILES ${RLIMGUI_HEADER_FILES})
 set(INCLUDE_DIRS
     ${SOURCE_DIR}
     ${RLIMGUI_DIR}
+    ${GLEW_DIR}/include  # Incluir la carpeta de encabezados de GLEW
     )
 
 
@@ -99,6 +102,9 @@ add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${HEADER_FILES} "source/private/r
 # Setup the include directories
 target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIRS})
 
+
+set(GLEW_LIB_DIR ${GLEW_DIR}/lib)
+set(GLEW_LIB glew32)
 
 # ---------------------------------------------------------------------
 # LINK OPTIONS
@@ -144,3 +150,9 @@ install(TARGETS ${PROJECT_NAME}
 foreach (dir ${ADDITIONAL_DIRS})
   install(DIRECTORY ${PROJECT_SOURCE_DIR}/${dir} DESTINATION ${INSTALLATION_PATH})
 endforeach ()
+
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/assets $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
+)

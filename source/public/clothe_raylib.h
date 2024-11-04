@@ -1,5 +1,7 @@
 #include "cloth.h"
 #include <raylib.h>
+#include <string>
+#include <GL/glew.h>
 
 namespace JE {
 
@@ -13,8 +15,19 @@ namespace JE {
 			void SetColor(Color color);
 			virtual void DrawClothe();
 
+			bool SetTexture(const char* path);
+
 		private:
 			Color m_color = GREEN;
+
+			Texture2D m_tex;
+			std::string m_vertex_shader;
+			std::string m_fragment_shader;
+
+			std::string readShaderCode(const char* filename);
+			bool compileShader(const char* filename, GLenum shaderType);
 	};
+
+
 
 }
