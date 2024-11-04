@@ -4,11 +4,13 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <GL/glew.h>
 
 namespace JE {
 
 	ClotheRaylib::ClotheRaylib(unsigned int rows, unsigned int columns, float length_x, float length_y) : Cloth(rows, columns, length_x, length_y){
 
+		//createShaderProgram("assets/vertex_shader.vs", "assets/fragment_shader.fs");
 
 	}
 
@@ -67,9 +69,51 @@ namespace JE {
 		return buffer.str();
 	}
 
-	bool ClotheRaylib::compileShader(const char* filename, GLenum shaderType){
+	GLuint ClotheRaylib::compileShader(const char* filename, GLenum shaderType){
+		std::string code = readShaderCode(filename);
+		const char* shaderCode = code.c_str();
 
-		return false;
+		GLuint shader = glCreateShader(shaderType);
+		glShaderSource(shader, 1, &shaderCode, NULL);
+		glCompileShader(shader);
+
+		// Comprobar errores de compilación
+		GLint success;
+		glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+		if (!success) {
+			char infoLog[512];
+			glGetShaderInfoLog(shader, 512, NULL, infoLog);
+			std::cerr << "Error al compilar el shader (" << filename << "): " << infoLog << std::endl;
+		}
+
+		return shader;
 	}
+
+	/*
+	GLuint ClotheRaylib::createShaderProgram(const char* vertexPath, const char* fragmentPath) {
+		m_vertex_shader = compileShader(vertexPath, GL_VERTEX_SHADER);
+		m_fragment_shader = compileShader(fragmentPath, GL_FRAGMENT_SHADER);
+
+		m_program = glCreateProgram();
+		glAttachShader(m_program, m_vertex_shader);
+		glAttachShader(m_program, m_fragment_shader);
+		glLinkProgram(m_program);
+
+		// Comprobar errores de enlace
+		GLint success;
+		glGetProgramiv(m_program, GL_LINK_STATUS, &success);
+		if (!success) {
+			char infoLog[512];
+			glGetProgramInfoLog(m_program, 512, NULL, infoLog);
+			std::cerr << "Error al enlazar el shader program: " << infoLog << std::endl;
+		}
+
+		// Eliminar shaders ya que están enlazados
+		glDeleteShader(m_vertex_shader);
+		glDeleteShader(m_fragment_shader);
+
+		return m_program;
+	}
+	*/
 
 }

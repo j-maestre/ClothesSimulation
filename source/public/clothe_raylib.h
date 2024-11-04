@@ -16,16 +16,18 @@ namespace JE {
 			virtual void DrawClothe();
 
 			bool SetTexture(const char* path);
-
+			 
 		private:
 			Color m_color = GREEN;
 
 			Texture2D m_tex;
-			std::string m_vertex_shader;
-			std::string m_fragment_shader;
+			GLuint m_vertex_shader;
+			GLuint m_fragment_shader;
+			GLuint m_program;
 
 			std::string readShaderCode(const char* filename);
-			bool compileShader(const char* filename, GLenum shaderType);
+			GLuint compileShader(const char* filename, GLenum shaderType);
+			GLuint createShaderProgram(const char* vertexPath, const char* fragmentPath);
 	};
 
 

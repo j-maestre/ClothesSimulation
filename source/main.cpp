@@ -9,6 +9,8 @@
 #include "public/rope_raylib.h"
 #include "public/clothe_raylib.h"
 
+//#define GLEW_STATIC
+//#define GL_VERSION_3_3
 
 //#define SHOW_ROPES
 
