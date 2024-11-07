@@ -127,6 +127,17 @@ int main(int argc, char** argv){
 
     cloth.SetTexture("assets/texture_0.png");
 
+    // Al insertar uno nuevo se pierde la referencia que habia cogido por eso solo tengo el ultimo bien
+
+    JE::CollisionManager* cm = JE::CollisionManager::GetInstance();
+    unsigned int s = cm->CreateSphereCollision(5.0f, JE::Vec3(0.0f, 0.0f, 0.0f));
+    unsigned int s2 = cm->CreateSphereCollision(6.0f, JE::Vec3(0.0f, 0.0f, 0.0f));
+    unsigned int s3 = cm->CreateSphereCollision(7.0f, JE::Vec3(0.0f, 0.0f, 0.0f));
+
+    const JE::SphereCollision& sphere1 = cm->GetsphereCollision(s);
+    const JE::SphereCollision& sphere2 = cm->GetsphereCollision(s2);
+    const JE::SphereCollision& sphere3 = cm->GetsphereCollision(s3);
+
     while (!WindowShouldClose()) {
 
         if (IsKeyDown(KEY_LEFT_CONTROL)){
