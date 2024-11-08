@@ -38,7 +38,9 @@ namespace JE{
 	}
 
 	void CollisionManager::Update(float dt){
+		// int j = i para empezar y no repetir comprobaciones 
 		for (const SphereCollision& sphere_first : m_spheres) {
+			sphere_first.DebugDrawSphere_Raylib();	
 			for (const SphereCollision& sphere_second : m_spheres) {
 				if (sphere_first != sphere_second) {
 					

@@ -130,9 +130,9 @@ int main(int argc, char** argv){
     // Al insertar uno nuevo se pierde la referencia que habia cogido por eso solo tengo el ultimo bien
 
     JE::CollisionManager* cm = JE::CollisionManager::GetInstance();
-    unsigned int s = cm->CreateSphereCollision(5.0f, JE::Vec3(0.0f, 0.0f, 0.0f));
-    unsigned int s2 = cm->CreateSphereCollision(6.0f, JE::Vec3(0.0f, 0.0f, 0.0f));
-    unsigned int s3 = cm->CreateSphereCollision(7.0f, JE::Vec3(0.0f, 0.0f, 0.0f));
+    unsigned int s = cm->CreateSphereCollision(1.0f, JE::Vec3(0.0f, 5.0f, 0.0f));
+    unsigned int s2 = cm->CreateSphereCollision(1.0f, JE::Vec3(2.0f, 5.0f, 0.0f));
+    unsigned int s3 = cm->CreateSphereCollision(1.0f, JE::Vec3(4.0f, 5.0f, 0.0f));
 
     const JE::SphereCollision& sphere1 = cm->GetsphereCollision(s);
     const JE::SphereCollision& sphere2 = cm->GetsphereCollision(s2);
@@ -160,6 +160,8 @@ int main(int argc, char** argv){
         rope3.GetPosition(0,x,y,z);
         rope3.SetPointPosition(0, rope_3_x_offset + cosf(GetTime() * speed) * 2.0f,y,z);
 #endif
+
+        cm->Update(GetTime());
 
         cloth.GetPosition(cols - 1, 0, x,y,z);
         cloth.SetPosition(cols - 1, 0, x_offset + (cosf(GetTime() * speed) * amplitude), y, z);

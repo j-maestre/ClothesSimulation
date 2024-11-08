@@ -50,6 +50,8 @@ namespace JE {
 				return m_id != other.m_id;
 			}
 
+			void DebugDrawSphere_Raylib() const;
+
 		private:
 			void* m_callback;
 			unsigned int m_id;

@@ -1,4 +1,5 @@
 #include "public/sphere_collision.h"
+#include "raylib.h"
 
 namespace JE {
 
@@ -41,5 +42,10 @@ namespace JE {
 
 	void SphereCollision::RenderSphere()
 	{
+	}
+
+	void SphereCollision::DebugDrawSphere_Raylib() const{
+		
+		DrawSphereWires(Vector3{ m_position.x, m_position.y, m_position.z }, m_radius * 0.1f, 16, 16, RED);
 	}
 }
