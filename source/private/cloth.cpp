@@ -87,9 +87,12 @@ namespace JE{
 
     }
 
-    void Cloth::InitClothe(Vec3 first_pos, float mass, float friction_factor) {
+    void Cloth::InitClothe(Vec3 first_pos, float mass, float friction_factor, bool enable_collision, CollisionManager* cm) {
 
         assert(m_num_particles_per_rope > 1 && "El número de partículas debe ser mayor que 1");
+
+        m_enabled_collision = enable_collision;
+        if (enable_collision) m_cm = cm;
 
         m_ropes.resize(m_rows);
 
@@ -120,6 +123,10 @@ namespace JE{
                 m_ropes[row][col].previous_position = Vec3(x, y, z);
                 m_ropes[row][col].mass = mass;
                 m_ropes[row][col].friction_factor = friction_factor * 0.1f;
+
+                if (enable_collision) {
+                    m_ropes[row][col].sphere_collision = cm->CreateSphereCollision(0.01f, Vec3(x, y, z));
+                }
 
                 // Fijar puntos en la primera fila
                 //m_ropes[row][col].fixed = (row == 0 && col == 0);
@@ -156,7 +163,9 @@ namespace JE{
                     Vec3 current_position = m_ropes[y][x].position;
 
                     // Calcular velocidades en cada eje
-                    Vec3 velocity = (m_ropes[y][x].position - m_ropes[y][x].previous_position) / dt;
+                    float colliding = 1.0f;
+                    if (m_enabled_collision && m_cm->GetsphereCollision(m_ropes[y][x].sphere_collision).GetColliding()) colliding = -0.5f;
+                    Vec3 velocity = ((m_ropes[y][x].position - m_ropes[y][x].previous_position) * colliding) / dt;
 
                     // Aplicar gravedad solo en el eje y
                     velocity.y += m_gravity * dt;
@@ -169,6 +178,8 @@ namespace JE{
 
                     // Actualizar la posición previa para el próximo frame
                     m_ropes[y][x].previous_position = current_position;
+
+                    if (m_enabled_collision)m_cm->GetsphereCollision(m_ropes[y][x].sphere_collision).m_position = Vec3(m_ropes[y][x].position.x, m_ropes[y][x].position.y, m_ropes[y][x].position.z);
                 }
             }
         }

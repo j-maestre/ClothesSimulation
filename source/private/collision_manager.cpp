@@ -37,10 +37,16 @@ namespace JE{
 		}
 	}
 
-	void CollisionManager::Update(float dt){
+
+
+	void CollisionManager::ResetColliders(){
 		for (SphereCollision& sphere : m_spheres) {
-			sphere.Update();
+			sphere.Reset();
 		}
+	}
+
+	void CollisionManager::Update(float dt){
+		
 		// int j = i para empezar y no repetir comprobaciones 
 		for (SphereCollision& sphere_first : m_spheres) {
 			sphere_first.DebugDrawSphere_Raylib();	
@@ -48,10 +54,9 @@ namespace JE{
 				if (sphere_first != sphere_second) {
 					
 					if (sphere_first.CheckCollision(sphere_second)) {
-						// Get the direction and inverse that direction (bounce)
-						printf("COLLIDE!\n");
+						//printf("COLLIDE!\n");
 					}else {
-						printf("  \n");
+						//printf("\n");
 					}
 					
 				}

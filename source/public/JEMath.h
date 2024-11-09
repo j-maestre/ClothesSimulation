@@ -50,6 +50,7 @@ namespace JE {
 	struct Point {
 		Vec3 position;
 		Vec3 previous_position;
+		unsigned int sphere_collision;
 		float mass = 1.0f;
 		float friction_factor = 1.0f;
 		bool fixed = false;

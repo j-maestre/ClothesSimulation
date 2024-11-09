@@ -14,7 +14,7 @@ namespace JE {
 			~SphereCollision();
 
 			// Must be called everyframe at begining
-			void Update();
+			void Reset();
 
 			// This function returns true when collision starts or is overlaping
 			bool IsColliding();

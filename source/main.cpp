@@ -11,6 +11,7 @@
 
 
 //#define SHOW_ROPES
+#define SHOW_CLOTH
 
 int main(int argc, char** argv){
 
@@ -50,6 +51,8 @@ int main(int argc, char** argv){
     Color black = { 0,0,0,0 };
     Color red = {255, 10, 10, 255};
 
+    JE::CollisionManager* cm = JE::CollisionManager::GetInstance();
+
 
     JE::RopeRaylib rope(0.25f, 100);
     JE::RopeRaylib rope2(0.25f, 100);
@@ -63,7 +66,7 @@ int main(int argc, char** argv){
     float rope2_mass = 3.0f;
     float rope3_mass = 3.0f;
 
-    rope.InitRope(JE::Vec3{ 0.0f, 5.0f, 0.0f }, JE::Vec3{ 0.0f, -5.0f, 0.0f }, 1.0f, rope1_friction);
+    rope.InitRope(JE::Vec3{ 0.0f, 5.0f, 0.0f }, JE::Vec3{ 0.0f, -5.0f, 0.0f }, 1.0f, rope1_friction, false, cm);
     rope2.InitRope(JE::Vec3{ 0.0f, 5.0f, 0.0f }, JE::Vec3{ 0.0f, -5.0f, 0.0f }, 3.0f, rope2_friction);
 
     float rope_3_x_offset = 5.0f;
@@ -80,7 +83,7 @@ int main(int argc, char** argv){
 
     //printf("Lenght-> %f\n Num particles %d", rope.m_lenght, rope.m_numParticles);
 
-    float speed = 10.0f;
+    float speed = 2.0f;
     float amplitude = 2.0f;
 
     //Vec3 position, Vec3 direction, float strength, float spread_angle, float max_distance, bool enabled = true
@@ -88,16 +91,16 @@ int main(int argc, char** argv){
 
     rlImGuiSetup(true);
 
-    unsigned int rows = 20;
-    unsigned int cols = 20;
+    unsigned int rows = 32;
+    unsigned int cols = 32;
 
     JE::ClotheRaylib cloth(rows, cols, 5.0f, 5.0f);
     JE::ClotheRaylib courtain1(rows, cols, 10.0f, 10.0f);
     JE::ClotheRaylib courtain2(rows, cols, 10.0f, 10.0f);
 
     cloth.InitClothe(JE::Vec3{ 0.0f, 5.0f, 0.0f }, 10.0f, 0.1f);
-    courtain1.InitClothe(JE::Vec3{ 10.0f, 5.0f, 10.0f }, 10.0f, 0.1f);
-    courtain2.InitClothe(JE::Vec3{ 20.0f, 5.0f, 10.0f }, 10.0f, 0.1f);
+    courtain1.InitClothe(JE::Vec3{ 10.0f, 5.0f, 10.0f }, 10.0f, 0.1f, false, cm);
+    courtain2.InitClothe(JE::Vec3{ 20.0f, 5.0f, 10.0f }, 10.0f, 0.1f, false, cm);
 
     courtain1.SetColor(BLUE);
 
@@ -129,7 +132,6 @@ int main(int argc, char** argv){
 
     // Al insertar uno nuevo se pierde la referencia que habia cogido por eso solo tengo el ultimo bien
 
-    JE::CollisionManager* cm = JE::CollisionManager::GetInstance();
     unsigned int s = cm->CreateSphereCollision(1.0f, JE::Vec3(0.0f, 5.0f, 0.0f));
     unsigned int s2 = cm->CreateSphereCollision(1.0f, JE::Vec3(2.0f, 5.0f, 0.0f));
     unsigned int s3 = cm->CreateSphereCollision(1.0f, JE::Vec3(4.0f, 5.0f, 0.0f));
@@ -148,23 +150,26 @@ int main(int argc, char** argv){
         BeginDrawing();
         ClearBackground(black);
         BeginMode3D(camera);
+        cm->ResetColliders();
+
 
         float x, y, z;
 #ifdef SHOW_ROPES
         rope.GetPosition(0,x,y,z);
         rope.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
         
-        rope2.GetPosition(0,x,y,z);
+        /*rope2.GetPosition(0, x, y, z);
         rope2.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
         
         rope3.GetPosition(0,x,y,z);
-        rope3.SetPointPosition(0, rope_3_x_offset + cosf(GetTime() * speed) * 2.0f,y,z);
+        rope3.SetPointPosition(0, rope_3_x_offset + cosf(GetTime() * speed) * 2.0f,y,z);*/
 #endif
 
-        cm->Update(GetTime());
+        
 
-        cloth.GetPosition(cols - 1, 0, x,y,z);
-        cloth.SetPosition(cols - 1, 0, x_offset + (cosf(GetTime() * speed) * amplitude), y, z);
+
+        //cloth.GetPosition(cols - 1, 0, x,y,z);
+        //cloth.SetPosition(cols - 1, 0, x_offset + (cosf(GetTime() * speed) * amplitude), y, z);
 
         // --- Wind turbine ---
         
@@ -223,23 +228,27 @@ int main(int argc, char** argv){
 
         //if (IsKeyDown(KEY_SPACE)) {
             rope.Update(GetFrameTime());
-            rope2.Update(GetFrameTime());
-            rope3.Update(GetFrameTime());
+            //rope.Update(1.0f/60.0f);
+            //rope2.Update(GetFrameTime());
+            //rope3.Update(GetFrameTime());
         //}
             rope.DrawRope();
-            rope2.DrawRope();
-            rope3.DrawRope();
+            //rope2.DrawRope();
+            //rope3.DrawRope();
 #endif
 
             //cloth.Update(GetFrameTime());
             //cloth.DrawClothe();
 
+#ifdef SHOW_CLOTH
             courtain1.Update(GetFrameTime());
+            //courtain1.Update(1.0f/60.0f);
             courtain1.DrawClothe();
             
             courtain2.Update(GetFrameTime());
+            //courtain2.Update(1.0f / 60.0f);
             courtain2.DrawClothe();
-
+#endif
 
         }
 
@@ -252,6 +261,9 @@ int main(int argc, char** argv){
 
 
         //DrawSphere(Vector3{0.0f, 5.0f, 0.0f}, 0.5f, red);
+
+        cm->Update(GetTime());
+
 
         DrawCube(cubePosition, cubeSize, cubeSize, cubeSize, WHITE);
         DrawCubeWires(cubePosition, cubeSize, cubeSize, cubeSize, DARKGRAY);

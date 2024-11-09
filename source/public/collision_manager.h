@@ -14,13 +14,14 @@ namespace JE {
 			static CollisionManager* GetInstance();
 
 			CollisionManager(const CollisionManager&) = delete;
-			CollisionManager(CollisionManager&&) = delete;
+			CollisionManager(CollisionManager&) = default;
 			~CollisionManager();
 
 
 			unsigned int CreateSphereCollision(float radius, Vec3 position);
 			SphereCollision& GetsphereCollision(unsigned int id);
 
+			void ResetColliders();
 			void Update(float dt);
 
 		private:

@@ -1,5 +1,7 @@
 #pragma once
 #include "JEMath.h"
+#include "sphere_collision.h"
+#include "collision_manager.h"
 
 
 namespace JE {
@@ -25,7 +27,7 @@ class WindTurbine;
 		~Rope();
 
 		// First point position and second point position
-		void InitRope(Vec3 first_pos, Vec3 direction, float mass = 1.0f, float friction_factor = 1.0f);
+		void InitRope(Vec3 first_pos, Vec3 direction, float mass = 1.0f, float friction_factor = 1.0f, bool enable_collision = false, CollisionManager* cm = nullptr);
 
 		// Called every frame
 		void Update(float dt);
@@ -59,7 +61,10 @@ class WindTurbine;
 		float m_gravity = -9.81f;
 		float m_desiredDistance = 0.0f;
 
+		bool m_enabled_collision = false;
+
 		Point* m_points;
+		CollisionManager* m_cm;
 
 	public:
 		float m_lenght;

@@ -26,7 +26,7 @@ namespace JE {
 	{
 	}
 
-	void SphereCollision::Update(){
+	void SphereCollision::Reset(){
 		m_is_colliding = false;
 	}
 

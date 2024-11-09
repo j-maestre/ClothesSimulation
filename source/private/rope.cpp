@@ -7,13 +7,16 @@
 namespace JE {
 
 
-void Rope::InitRope(Vec3 first_pos, Vec3 direction, float mass, float friction_factor){
+void Rope::InitRope(Vec3 first_pos, Vec3 direction, float mass, float friction_factor, bool enable_collision, CollisionManager* cm){
 
     
     m_points = new Point[m_numParticles];
     assert(m_points && "New Points is null");
 
     Vec3 second_pos = first_pos + direction;
+
+    m_enabled_collision = enable_collision;
+    if (enable_collision) m_cm = cm;
 
     for (int i = 0; i < m_numParticles; i++) {
 
@@ -39,9 +42,12 @@ void Rope::InitRope(Vec3 first_pos, Vec3 direction, float mass, float friction_f
 
         //unsigned int numberOfSegments = m_numParticles - 1;
 
-        float ropeLength = sqrt(pow(first_pos.x - second_pos.x, 2) + pow(first_pos.y - second_pos.y, 2) + pow(first_pos.z - second_pos.z, 2));
+        float ropeLength = sqrt(pow(first_pos.x - second_pos.x, 2.0f) + pow(first_pos.y - second_pos.y, 2.0f) + pow(first_pos.z - second_pos.z, 2.0f));
         m_desiredDistance = ropeLength / (m_numParticles - 1);
 
+        if (enable_collision) {
+            m_points[i].sphere_collision = cm->CreateSphereCollision(0.01f, Vec3(x,y,z));
+        }
 
     }
 
@@ -78,9 +84,11 @@ void Rope::Update(float dt){
 
 
             // Calculating previous velocity
-            float xVelocity = (m_points[i].position.x - m_points[i].previous_position.x) / m_timeStep;
-            float yVelocity = (m_points[i].position.y - m_points[i].previous_position.y) / m_timeStep;
-            float zVelocity = (m_points[i].position.z - m_points[i].previous_position.z) / m_timeStep;
+            float colliding = 1.0f;
+            if (m_enabled_collision && m_cm->GetsphereCollision(m_points[i].sphere_collision).GetColliding()) colliding = -0.5f;
+            float xVelocity = ((m_points[i].position.x - m_points[i].previous_position.x) * colliding) / m_timeStep;
+            float yVelocity = ((m_points[i].position.y - m_points[i].previous_position.y) * colliding) / m_timeStep;
+            float zVelocity = ((m_points[i].position.z - m_points[i].previous_position.z) * colliding) / m_timeStep;
 
             float gravity_force = m_gravity * m_points[i].mass;
             float acceleration_y = gravity_force / m_points[i].mass;
@@ -99,6 +107,8 @@ void Rope::Update(float dt){
             m_points[i].previous_position.x = x_tmp;
             m_points[i].previous_position.y = y_tmp;
             m_points[i].previous_position.z = z_tmp;
+
+            if(m_enabled_collision)m_cm->GetsphereCollision(m_points[i].sphere_collision).m_position = Vec3(m_points[i].position.x, m_points[i].position.y, m_points[i].position.z);
         }
     }
 
@@ -114,6 +124,7 @@ void Rope::Update(float dt){
             float distanceError = distance - m_desiredDistance;
 
              // The direction in which particles should be pulled or pushed
+            
             float xDifference = actual.position.x - previous.position.x;
             float yDifference = actual.position.y - previous.position.y;
             float zDifference = actual.position.z - previous.position.z;

@@ -1,6 +1,8 @@
 #pragma once
 #include "JEMath.h"
+#include "collision_manager.h"
 #include "vector"
+
 
 namespace JE {
 
@@ -13,7 +15,7 @@ namespace JE {
 		Cloth(Cloth&&);
 		~Cloth();
 
-		void InitClothe(Vec3 first_pos, float mass, float friction_factor);
+		void InitClothe(Vec3 first_pos, float mass, float friction_factor, bool enable_collision = false, CollisionManager* cm = nullptr);
 		
 		void GetPosition(unsigned int row, unsigned int index, float& x, float& y, float& z);
 		void SetPosition(unsigned int row, unsigned int index, float x, float y, float z);
@@ -43,6 +45,10 @@ namespace JE {
 		float m_gravity = -9.81f;
 
 		std::vector<Point*> m_ropes;
+
+		bool m_enabled_collision = false;
+		CollisionManager* m_cm;
+
 	private:
 
 		static inline void UpdateJaksobenParticlesPair(Cloth& c, Point* first, Point* second, float dt);
