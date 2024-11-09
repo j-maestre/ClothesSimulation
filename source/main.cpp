@@ -134,9 +134,9 @@ int main(int argc, char** argv){
     unsigned int s2 = cm->CreateSphereCollision(1.0f, JE::Vec3(2.0f, 5.0f, 0.0f));
     unsigned int s3 = cm->CreateSphereCollision(1.0f, JE::Vec3(4.0f, 5.0f, 0.0f));
 
-    const JE::SphereCollision& sphere1 = cm->GetsphereCollision(s);
-    const JE::SphereCollision& sphere2 = cm->GetsphereCollision(s2);
-    const JE::SphereCollision& sphere3 = cm->GetsphereCollision(s3);
+    JE::SphereCollision& sphere1 = cm->GetsphereCollision(s);
+    JE::SphereCollision& sphere2 = cm->GetsphereCollision(s2);
+    JE::SphereCollision& sphere3 = cm->GetsphereCollision(s3);
 
     while (!WindowShouldClose()) {
 
@@ -287,6 +287,15 @@ int main(int argc, char** argv){
             ImGui::DragFloat("Mass 3", &rope3_mass, 0.01f, 0.0f, 10.0f);
             rope3.SetAllFriction(rope3_friction);
             rope3.SetAllMass(rope3_mass);
+        }
+
+        if (ImGui::CollapsingHeader("Debug colliders")) {
+            JE::SphereCollision& s_tmp= cm->GetsphereCollision(s);
+       
+
+            ImGui::DragFloat("Sphere 0 position X", &s_tmp.m_position.x, 0.01f, -100.0f, 100.0f);
+            ImGui::DragFloat("Sphere 0 position Y", &s_tmp.m_position.y, 0.01f, -100.0f, 100.0f);
+            ImGui::DragFloat("Sphere 0 position Z", &s_tmp.m_position.z, 0.01f, -100.0f, 100.0f);
         }
 
         rlImGuiEnd();

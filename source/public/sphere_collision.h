@@ -13,13 +13,16 @@ namespace JE {
 			SphereCollision(SphereCollision&&);
 			~SphereCollision();
 
+			// Must be called everyframe at begining
+			void Update();
+
 			// This function returns true when collision starts or is overlaping
 			bool IsColliding();
 
 			// this callback will be called when a collision starts
 			void OnCollisionSuscribe(void* callback);
 
-			void CheckCollision(const SphereCollision& other);
+			bool CheckCollision(const SphereCollision& other);
 
 			virtual void RenderSphere();
 
@@ -52,13 +55,20 @@ namespace JE {
 
 			void DebugDrawSphere_Raylib() const;
 
+			const bool GetColliding() const { return m_is_colliding; }
+
+	
+			Vec3 m_position;
+
 		private:
 			void* m_callback;
 			unsigned int m_id;
+			bool m_is_colliding = false;
 
 		protected:
 			float m_radius;
-			Vec3 m_position;
+
+
 
 		friend class CollisionManager;
 	};

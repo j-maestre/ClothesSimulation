@@ -19,7 +19,7 @@ namespace JE {
 
 
 			unsigned int CreateSphereCollision(float radius, Vec3 position);
-			const SphereCollision& GetsphereCollision(unsigned int id) const;
+			SphereCollision& GetsphereCollision(unsigned int id);
 
 			void Update(float dt);
 

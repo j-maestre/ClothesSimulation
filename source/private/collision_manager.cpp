@@ -31,18 +31,28 @@ namespace JE{
 		return tmp.m_id;
 	}
 
-	const SphereCollision& CollisionManager::GetsphereCollision(unsigned int id) const{
-		for (const auto& sphere : m_spheres) {
+	SphereCollision& CollisionManager::GetsphereCollision(unsigned int id){
+		for (SphereCollision& sphere : m_spheres) {
 			if (sphere.m_id == id) return sphere;
 		}
 	}
 
 	void CollisionManager::Update(float dt){
+		for (SphereCollision& sphere : m_spheres) {
+			sphere.Update();
+		}
 		// int j = i para empezar y no repetir comprobaciones 
-		for (const SphereCollision& sphere_first : m_spheres) {
+		for (SphereCollision& sphere_first : m_spheres) {
 			sphere_first.DebugDrawSphere_Raylib();	
-			for (const SphereCollision& sphere_second : m_spheres) {
+			for (SphereCollision& sphere_second : m_spheres) {
 				if (sphere_first != sphere_second) {
+					
+					if (sphere_first.CheckCollision(sphere_second)) {
+						// Get the direction and inverse that direction (bounce)
+						printf("COLLIDE!\n");
+					}else {
+						printf("  \n");
+					}
 					
 				}
 
