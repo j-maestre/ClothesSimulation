@@ -9,7 +9,9 @@ namespace JE {
 
 	ClotheRaylib::ClotheRaylib(unsigned int rows, unsigned int columns, float length_x, float length_y) : Cloth(rows, columns, length_x, length_y){
 
-
+		m_sphere_matrices.reserve(rows * columns);
+		m_sphere_mesh = GenMeshSphere(0.01f, 8, 8);
+		m_mat_default = LoadMaterialDefault();
 	}
 
 	ClotheRaylib::~ClotheRaylib(){
@@ -25,11 +27,24 @@ namespace JE {
 		float x, y, z;
 		float x2, y2, z2;
 
+
+		float scale = 0.01f;
+
+		int index = 0;
 		for (unsigned int row = 0; row < m_rows; row++) {
 			for (int i = 0; i < m_num_particles_per_rope; i++) {
 
 				GetPosition(row, i, x, y, z);
-				DrawSphere(Vector3{ x, y, z }, 0.01f, RED);
+
+				Matrix mat = {
+					scale, 0.0f, 0.0f, 0.0f,   // Primera fila
+					0.0f, scale, 0.0f, 0.0f,   // Segunda fila
+					0.0f, 0.0f, scale, 0.0f,   // Tercera fila
+					x, y, z, 1.0f              // Cuarta fila (posición)
+				};
+				m_sphere_matrices.push_back(mat);
+
+				//DrawSphere(Vector3{ x, y, z }, 0.01f, RED);
 
 				if (i < m_num_particles_per_rope - 1) {
 					Vector3 startPos = { x,y,z };
@@ -44,8 +59,12 @@ namespace JE {
 					Vector3 endPos = { x2,y2,z2 };
 					DrawLine3D(startPos, endPos, m_color);
 				}
+				index++;
 			}
 		}
+
+		DrawMeshInstanced(m_sphere_mesh, m_mat_default, &(m_sphere_matrices[0]), m_rows * m_num_particles_per_rope);
+	
 	}
 
 	bool ClotheRaylib::SetTexture(const char* path){

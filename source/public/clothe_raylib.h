@@ -26,6 +26,11 @@ namespace JE {
 
 			std::string readShaderCode(const char* filename);
 			bool compileShader(const char* filename, GLenum shaderType);
+
+			Mesh m_sphere_mesh;
+			Material m_mat_default;
+
+			std::vector<Matrix> m_sphere_matrices;
 	};
 
 
