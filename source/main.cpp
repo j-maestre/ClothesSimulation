@@ -88,8 +88,8 @@ int main(int argc, char** argv){
 
     rlImGuiSetup(true);
 
-    unsigned int rows = 20;
-    unsigned int cols = 20;
+    unsigned int rows = 32;
+    unsigned int cols = 32;
 
     JE::ClotheRaylib cloth(rows, cols, 5.0f, 5.0f);
     JE::ClotheRaylib courtain1(rows, cols, 10.0f, 10.0f);
