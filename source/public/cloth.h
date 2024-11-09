@@ -1,6 +1,7 @@
 #pragma once
 #include "rope.h"
 #include "vector"
+#include "job_system.h"
 
 namespace JE {
 
@@ -20,7 +21,7 @@ namespace JE {
 		void SetFixed(unsigned int x, unsigned int y, bool fixed = true);
 
 
-		void Update(float dt);
+		void Update(float dt/*, JobSystem& js*/);
 		virtual void DrawClothe() = 0;
 
 	protected:
@@ -46,5 +47,10 @@ namespace JE {
 	private:
 
 		static inline void UpdateJaksobenParticlesPair(Cloth& c, Point* first, Point* second, float dt);
+		void RestrictHorizontalDistances(float dt);
+		void RestrictVerticalDistances(float dt);
+
+		std::thread m_horizontal_thread;
+		std::thread m_vertical_thread;
 	};
 };

@@ -1,12 +1,13 @@
-#include "public/cloth.h"
+ï»¿#include "public/cloth.h"
 #include "assert.h"
 
-namespace JE{
 
-    Cloth::Cloth(unsigned int rows, unsigned int columns, float length_x, float lenght_y) : m_rows(rows), m_columns(columns), m_length_per_rope(length_x){
+namespace JE {
+
+    Cloth::Cloth(unsigned int rows, unsigned int columns, float length_x, float lenght_y) : m_rows(rows), m_columns(columns), m_length_per_rope(length_x) {
 
         // Get the distance between particles I need for each rope, basing on rows, columns and length
-        const float desired_distance_per_particle = 1.0f; // Ajusta según sea necesario
+        const float desired_distance_per_particle = 1.0f; // Ajusta segï¿½n sea necesario
         m_num_particles_per_rope = columns;
 
         m_desired_distance_per_rope = length_x / (columns - 1);
@@ -16,61 +17,63 @@ namespace JE{
 
     inline void Cloth::UpdateJaksobenParticlesPair(Cloth& cloth, Point* previous, Point* actual, float dt) {
 
-            float distance = sqrtf(pow(previous->position.x - actual->position.x, 2.0f) + pow(previous->position.y - actual->position.y, 2.0f) + pow(previous->position.z - actual->position.z, 2.0f));
-            float distanceError = distance - cloth.m_desired_distance_per_rope;
+        float distance = sqrtf(pow(previous->position.x - actual->position.x, 2.0f) + pow(previous->position.y - actual->position.y, 2.0f) + pow(previous->position.z - actual->position.z, 2.0f));
+        float distanceError = distance - cloth.m_desired_distance_per_rope;
 
-            // The direction in which particles should be pulled or pushed
-            float xDifference = actual->position.x - previous->position.x;
-            float yDifference = actual->position.y - previous->position.y;
-            float zDifference = actual->position.z - previous->position.z;
+        // The direction in which particles should be pulled or pushed
+        float xDifference = actual->position.x - previous->position.x;
+        float yDifference = actual->position.y - previous->position.y;
+        float zDifference = actual->position.z - previous->position.z;
 
-            // Make unit vector
-            float distanceSquared = (xDifference * xDifference) + (yDifference * yDifference) + (zDifference * zDifference);
-            //float distanceSquared = (xDifference + yDifference + zDifference);
+        // Make unit vector
+        float distanceSquared = (xDifference * xDifference) + (yDifference * yDifference) + (zDifference * zDifference);
+        //float distanceSquared = (xDifference + yDifference + zDifference);
 
-            if (distanceSquared > 0.0f) {
-                float distance = sqrtf(distanceSquared);
-                //float distance = distanceSquared;
+        if (distanceSquared > 0.0f) {
+            float distance = sqrtf(distanceSquared);
+            //float distance = distanceSquared;
 
-                float xDirection = xDifference / distance;
-                float yDirection = yDifference / distance;
-                float zDirection = zDifference / distance;
+            float xDirection = xDifference / distance;
+            float yDirection = yDifference / distance;
+            float zDirection = zDifference / distance;
 
-                float totalMass = actual->mass + previous->mass;
-                float correction_factor_previous = previous->mass / totalMass;
-                float correction_factor_actual = actual->mass / totalMass;
+            float totalMass = actual->mass + previous->mass;
+            float correction_factor_previous = previous->mass / totalMass;
+            float correction_factor_actual = actual->mass / totalMass;
 
 
-                if (previous->fixed && !actual->fixed) {
+            if (previous->fixed && !actual->fixed) {
 
-                    actual->position.x -= correction_factor_previous * (xDirection * distanceError);
-                    actual->position.y -= correction_factor_previous * (yDirection * distanceError);
-                    actual->position.z -= correction_factor_previous * (zDirection * distanceError);
+                actual->position.x -= correction_factor_previous * (xDirection * distanceError);
+                actual->position.y -= correction_factor_previous * (yDirection * distanceError);
+                actual->position.z -= correction_factor_previous * (zDirection * distanceError);
 
-                }else if (actual->fixed && !previous->fixed) {
-
-                    previous->position.x += correction_factor_actual * (xDirection * distanceError);
-                    previous->position.y += correction_factor_actual * (yDirection * distanceError);
-                    previous->position.z += correction_factor_actual * (zDirection * distanceError);
-
-                }else if (!previous->fixed && !actual->fixed) {
-    
-                    float x_distance = 0.5f * (xDirection * distanceError);
-                    float y_distance = 0.5f * (yDirection * distanceError);
-                    float z_distance = 0.5f * (zDirection * distanceError);
-
-                    actual->position.x -= x_distance;
-                    actual->position.y -= y_distance;
-                    actual->position.z -= z_distance;
-
-                    previous->position.x += x_distance;
-                    previous->position.y += y_distance;
-                    previous->position.z += z_distance;
-                }
             }
-        
+            else if (actual->fixed && !previous->fixed) {
+
+                previous->position.x += correction_factor_actual * (xDirection * distanceError);
+                previous->position.y += correction_factor_actual * (yDirection * distanceError);
+                previous->position.z += correction_factor_actual * (zDirection * distanceError);
+
+            }
+            else if (!previous->fixed && !actual->fixed) {
+
+                float x_distance = 0.5f * (xDirection * distanceError);
+                float y_distance = 0.5f * (yDirection * distanceError);
+                float z_distance = 0.5f * (zDirection * distanceError);
+
+                actual->position.x -= x_distance;
+                actual->position.y -= y_distance;
+                actual->position.z -= z_distance;
+
+                previous->position.x += x_distance;
+                previous->position.y += y_distance;
+                previous->position.z += z_distance;
+            }
+        }
+
     }
-    
+
     Cloth::Cloth(const Cloth&) {
 
     }
@@ -89,11 +92,11 @@ namespace JE{
 
     void Cloth::InitClothe(Vec3 first_pos, float mass, float friction_factor) {
 
-        assert(m_num_particles_per_rope > 1 && "El número de partículas debe ser mayor que 1");
+        assert(m_num_particles_per_rope > 1 && "El numero de particulas debe ser mayor que 1");
 
         m_ropes.resize(m_rows);
 
-        // Calcula la posición del último punto en la cuerda
+        // Calcula la posiciï¿½n del ï¿½ltimo punto en la cuerda
         Vec3 second_pos = first_pos;
         second_pos.x += m_desired_distance_per_rope;
 
@@ -115,7 +118,7 @@ namespace JE{
                 float y = current_row_pos.y;
                 float z = first_pos.z; // +(m_desired_distance_per_rope * col);
 
-                // Asigna la posición calculada al punto
+                // Asigna la posiciï¿½n calculada al punto
                 m_ropes[row][col].position = Vec3(x, y, z);
                 m_ropes[row][col].previous_position = Vec3(x, y, z);
                 m_ropes[row][col].mass = mass;
@@ -126,49 +129,109 @@ namespace JE{
             }
         }
 
-        // Calcula la distancia deseada entre puntos basada en el tamaño de la malla
+        // Calcula la distancia deseada entre puntos basada en el tamaï¿½o de la malla
         //m_desired_distance_per_rope = m_length_per_rope / (m_num_particles_per_rope - 1);
     }
 
 
-    void Cloth::GetPosition(unsigned int posx, unsigned int posy, float& x, float& y, float& z){
+    void Cloth::GetPosition(unsigned int posx, unsigned int posy, float& x, float& y, float& z) {
 
         x = m_ropes[posy][posx].position.x;
         y = m_ropes[posy][posx].position.y;
         z = m_ropes[posy][posx].position.z;
     }
 
-    void Cloth::SetPosition(unsigned int posx, unsigned int posy, float x, float y, float z){
+    void Cloth::SetPosition(unsigned int posx, unsigned int posy, float x, float y, float z) {
         m_ropes[posy][posx].position.x = x;
         m_ropes[posy][posx].position.y = y;
         m_ropes[posy][posx].position.z = z;
     }
 
-    void Cloth::SetFixed(unsigned int x, unsigned int y, bool fixed){
+    void Cloth::SetFixed(unsigned int x, unsigned int y, bool fixed) {
         m_ropes[y][x].fixed = fixed;
     }
 
-    void Cloth::Update(float dt) {
+    void Cloth::RestrictHorizontalDistances(float dt) {
+        for (unsigned int y = 0; y < m_rows; y++) {
+            for (int x = 1; x < m_num_particles_per_rope; x++) {
+                Point* previous = &m_ropes[y][x - 1];
+                Point* current = &m_ropes[y][x];
+                UpdateJaksobenParticlesPair(*this, previous, current, dt);
+            }
+        }
+    }
+
+    // Funciï¿½n para restringir distancias verticales
+    void Cloth::RestrictVerticalDistances(float dt) {
+        for (unsigned int y = 1; y < m_rows; y++) {
+            for (int x = 0; x < m_num_particles_per_rope; x++) {
+                Point* previous = &m_ropes[y - 1][x];
+                Point* current = &m_ropes[y][x];
+                UpdateJaksobenParticlesPair(*this, previous, current, dt);
+            }
+        }
+    }
+
+
+    void Cloth::Update(float dt/*, JobSystem& js*/) {
+
+        /*
+        auto updateLambda = [this, dt](unsigned int y, int x) {
+
+            if (!m_ropes[y][x].fixed) {
+
+                Vec3 current_position = m_ropes[y][x].position;
+
+                // Apply velocity and check collision
+                Vec3 velocity = (m_ropes[y][x].position - m_ropes[y][x].previous_position) / dt;
+
+                // Apply gravity
+                velocity.y += m_gravity * dt;
+
+                // Apply friction to velocity
+                velocity *= (1.0f - m_ropes[y][x].friction_factor);
+
+                // Update position using Verlet integration
+                m_ropes[y][x].position += velocity * dt;
+
+                // Update previous position for the next frame
+                m_ropes[y][x].previous_position = current_position;
+            }
+        };
+
+        for (unsigned int y = 0; y < m_rows; y++) {
+            for (int x = 0; x < m_num_particles_per_rope; x++) {
+                js.add_task([=] { updateLambda(y, x); });
+            }
+        }
+
+        js.wait_until_finish();
+        */
+
+
+
         for (unsigned int y = 0; y < m_rows; y++) {
             for (int x = 0; x < m_num_particles_per_rope; x++) {
                 if (!m_ropes[y][x].fixed) {
-
                     Vec3 current_position = m_ropes[y][x].position;
 
-                    // Calculate velocity
+                    // Apply velocity and check collision
                     Vec3 velocity = (m_ropes[y][x].position - m_ropes[y][x].previous_position) / dt;
+
+                    // Apply gravity
                     velocity.y += m_gravity * dt;
 
-                    // Apply friction
+                    // Apply friction to velocity
                     velocity *= (1.0f - m_ropes[y][x].friction_factor);
 
                     // Update position using Verlet integration
                     m_ropes[y][x].position += velocity * dt;
 
-                    // Set previous position for the next frame
+                    // Update previous position for the next frame
                     m_ropes[y][x].previous_position = current_position;
                 }
             }
+
         }
 
         // Jakobsen Horizontal
@@ -183,7 +246,7 @@ namespace JE{
                         Point* current = &m_ropes[y][x];
                         UpdateJaksobenParticlesPair(*this, previous, current, dt);
                     }
-                    
+
                     if (y > 0) {
 
                         Point* previous = &m_ropes[y - 1][x];
@@ -194,8 +257,24 @@ namespace JE{
             }
             */
 
+            /*std::thread horizontal_thread(&Cloth::RestrictHorizontalDistances, this, dt);
+            std::thread vertical_thread(&Cloth::RestrictVerticalDistances, this, dt);
+
+            horizontal_thread.join();
+            vertical_thread.join();*/
+
+            //m_horizontal_thread(&Cloth::RestrictHorizontalDistances, this, dt);
             
+            /*
+            js.add_task(std::bind(&Cloth::RestrictHorizontalDistances, this, dt));
+            js.add_task(std::bind(&Cloth::RestrictVerticalDistances, this, dt));
+
+            js.wait_until_finish();
+            */
+
+
             // Restringir distancias horizontales (entre puntos en una misma fila)
+           
             for (unsigned int y = 0; y < m_rows; y++) {
                 for (int x = 1; x < m_num_particles_per_rope; x++) {
                     Point* previous = &m_ropes[y][x - 1];
@@ -213,6 +292,7 @@ namespace JE{
                 }
             }
             
+
         }
     }
 
