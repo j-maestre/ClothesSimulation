@@ -152,22 +152,20 @@ namespace JE{
         for (unsigned int y = 0; y < m_rows; y++) {
             for (int x = 0; x < m_num_particles_per_rope; x++) {
                 if (!m_ropes[y][x].fixed) {
-                    // Guardar posición actual para el siguiente cálculo de velocidad
+
                     Vec3 current_position = m_ropes[y][x].position;
 
-                    // Calcular velocidades en cada eje
+                    // Calculate velocity
                     Vec3 velocity = (m_ropes[y][x].position - m_ropes[y][x].previous_position) / dt;
-
-                    // Aplicar gravedad solo en el eje y
                     velocity.y += m_gravity * dt;
 
-                    // Aplicar fricción a la velocidad en todos los ejes
+                    // Apply friction
                     velocity *= (1.0f - m_ropes[y][x].friction_factor);
 
-                    // Actualizar la posición usando integración de Verlet
+                    // Update position using Verlet integration
                     m_ropes[y][x].position += velocity * dt;
 
-                    // Actualizar la posición previa para el próximo frame
+                    // Set previous position for the next frame
                     m_ropes[y][x].previous_position = current_position;
                 }
             }
