@@ -8,11 +8,17 @@
 #include "public/rope_physics.h"
 #include "public/rope_raylib.h"
 #include "public/clothe_raylib.h"
+#include "public/job_system.h"
 
+#include <chrono>
+#include <iostream>
 
 //#define SHOW_ROPES
 
 int main(int argc, char** argv){
+
+    JobSystem job_sys;
+
 
     // Inicializar la ventana
     const int screenWidth = 1600;
@@ -28,6 +34,8 @@ int main(int argc, char** argv){
 
     const char* monitor_name = GetMonitorName(0);
     printf("%s Refresh Rate: %d\n", monitor_name, refresh_rate);
+
+    SetTraceLogLevel(LOG_NONE);
 
     //const char* glVersion =  GetGraphicsDevice().glVersion;
     //printf("Versión de OpenGL: %s\n", glVersion);
@@ -45,7 +53,7 @@ int main(int argc, char** argv){
     Vector3 cubePosition = { 0.0f, 0.0f, 10.0f };
     float cubeSize = 2.0f;
 
-    //SetTargetFPS(100);
+    SetTargetFPS(60);
 
     Color black = { 0,0,0,0 };
     Color red = {255, 10, 10, 255};
@@ -95,9 +103,17 @@ int main(int argc, char** argv){
     JE::ClotheRaylib courtain1(rows, cols, 10.0f, 10.0f);
     JE::ClotheRaylib courtain2(rows, cols, 10.0f, 10.0f);
 
+    JE::ClotheRaylib courtain3(rows, cols, 10.0f, 10.0f);
+    JE::ClotheRaylib courtain4(rows, cols, 10.0f, 10.0f);
+    JE::ClotheRaylib courtain5(rows, cols, 10.0f, 10.0f);
+
     cloth.InitClothe(JE::Vec3{ 0.0f, 5.0f, 0.0f }, 10.0f, 0.1f);
     courtain1.InitClothe(JE::Vec3{ 10.0f, 5.0f, 10.0f }, 10.0f, 0.1f);
     courtain2.InitClothe(JE::Vec3{ 20.0f, 5.0f, 10.0f }, 10.0f, 0.1f);
+
+    courtain3.InitClothe(JE::Vec3{ 20.0f, -5.0f, 10.0f }, 10.0f, 0.1f);
+    courtain4.InitClothe(JE::Vec3{ 20.0f, -10.0f, 10.0f }, 10.0f, 0.1f);
+    courtain5.InitClothe(JE::Vec3{ 20.0f, -15.0f, 10.0f }, 10.0f, 0.1f);
 
     courtain1.SetColor(BLUE);
 
@@ -111,6 +127,12 @@ int main(int argc, char** argv){
 
     courtain2.SetFixed(0,0);
     courtain2.SetFixed(cols - 1,0);
+    
+    courtain3.SetFixed(0,0);
+    courtain4.SetFixed(0,0);
+    courtain5.SetFixed(0,0);
+
+
 
     float x_offset, y_offset, z_offset;
     cloth.GetPosition(0, 11, x_offset, y_offset, z_offset);
@@ -126,6 +148,8 @@ int main(int argc, char** argv){
 
 
     cloth.SetTexture("assets/texture_0.png");
+
+    const float smoothing_factor = 0.1f;
 
     while (!WindowShouldClose()) {
 
@@ -206,6 +230,10 @@ int main(int argc, char** argv){
 
         if (GetTime() > 2.0f) {
 
+            float smooth_delta_time = 0.0f;
+            float dt = GetFrameTime();
+            smooth_delta_time = (1.0f - smoothing_factor) * smooth_delta_time + smoothing_factor * dt;
+
 #ifdef SHOW_ROPES
 
         //if (IsKeyDown(KEY_SPACE)) {
@@ -221,12 +249,55 @@ int main(int argc, char** argv){
             //cloth.Update(GetFrameTime());
             //cloth.DrawClothe();
 
-            courtain1.Update(GetFrameTime());
-            courtain1.DrawClothe();
             
-            courtain2.Update(GetFrameTime());
-            courtain2.DrawClothe();
 
+            //auto start = std::chrono::high_resolution_clock::now();
+            
+            
+            courtain1.Update(dt);
+            courtain2.Update(dt);
+            /*
+            courtain3.Update(GetFrameTime());
+            courtain4.Update(GetFrameTime());
+            courtain5.Update(GetFrameTime());
+            */
+            
+            
+            
+            /*
+            job_sys.add_task(std::bind(&JE::Cloth::Update, &courtain1, smooth_delta_time));
+            job_sys.add_task(std::bind(&JE::Cloth::Update, &courtain2, smooth_delta_time));
+            job_sys.add_task(std::bind(&JE::Cloth::Update, &courtain3, dt));
+            job_sys.add_task(std::bind(&JE::Cloth::Update, &courtain4, dt));
+            job_sys.add_task(std::bind(&JE::Cloth::Update, &courtain5, dt));
+            
+            job_sys.wait_until_finish();
+            */
+            
+
+            /*auto end = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<float, std::milli> duration = end - start;
+            std::cout << "Tiempo de ejecucion antes: " << duration.count() << " ms" << std::endl;
+            
+            
+            end = std::chrono::high_resolution_clock::now();
+            duration = end - start;
+            std::cout << "Tiempo de ejecucion despues: " << duration.count() << " ms" << std::endl;
+
+
+            start = std::chrono::high_resolution_clock::now();
+
+            */
+            courtain1.DrawClothe();
+            courtain2.DrawClothe();
+            /*courtain3.DrawClothe();
+            courtain4.DrawClothe();
+            courtain5.DrawClothe();*/
+
+           /* end = std::chrono::high_resolution_clock::now();
+            duration = end - start;
+            std::cout << "Tiempo de ejecucion draw: " << duration.count() << " ms" << std::endl;
+            */
 
         }
 
@@ -248,7 +319,8 @@ int main(int argc, char** argv){
         
         rlImGuiBegin();
 
-        
+        ImGui::Text("Delta Time: %f", GetFrameTime());
+
         if (ImGui::CollapsingHeader("General values")) {
             ImGui::DragFloat("Speed", &speed, 0.01f, 0.0f, 10.0f);
             ImGui::DragFloat("Amplitude", &amplitude, 0.01f, 0.0f, 10.0f);
