@@ -49,8 +49,5 @@ namespace JE {
 		static inline void UpdateJaksobenParticlesPair(Cloth& c, Point* first, Point* second, float dt);
 		void RestrictHorizontalDistances(float dt);
 		void RestrictVerticalDistances(float dt);
-
-		std::thread m_horizontal_thread;
-		std::thread m_vertical_thread;
 	};
 };

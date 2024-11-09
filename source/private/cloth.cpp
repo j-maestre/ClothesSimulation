@@ -123,14 +123,10 @@ namespace JE {
                 m_ropes[row][col].previous_position = Vec3(x, y, z);
                 m_ropes[row][col].mass = mass;
                 m_ropes[row][col].friction_factor = friction_factor * 0.1f;
-
-                // Fijar puntos en la primera fila
-                //m_ropes[row][col].fixed = (row == 0 && col == 0);
             }
         }
 
-        // Calcula la distancia deseada entre puntos basada en el tama�o de la malla
-        //m_desired_distance_per_rope = m_length_per_rope / (m_num_particles_per_rope - 1);
+
     }
 
 
@@ -161,7 +157,6 @@ namespace JE {
         }
     }
 
-    // Funci�n para restringir distancias verticales
     void Cloth::RestrictVerticalDistances(float dt) {
         for (unsigned int y = 1; y < m_rows; y++) {
             for (int x = 0; x < m_num_particles_per_rope; x++) {
@@ -174,41 +169,6 @@ namespace JE {
 
 
     void Cloth::Update(float dt/*, JobSystem& js*/) {
-
-        /*
-        auto updateLambda = [this, dt](unsigned int y, int x) {
-
-            if (!m_ropes[y][x].fixed) {
-
-                Vec3 current_position = m_ropes[y][x].position;
-
-                // Apply velocity and check collision
-                Vec3 velocity = (m_ropes[y][x].position - m_ropes[y][x].previous_position) / dt;
-
-                // Apply gravity
-                velocity.y += m_gravity * dt;
-
-                // Apply friction to velocity
-                velocity *= (1.0f - m_ropes[y][x].friction_factor);
-
-                // Update position using Verlet integration
-                m_ropes[y][x].position += velocity * dt;
-
-                // Update previous position for the next frame
-                m_ropes[y][x].previous_position = current_position;
-            }
-        };
-
-        for (unsigned int y = 0; y < m_rows; y++) {
-            for (int x = 0; x < m_num_particles_per_rope; x++) {
-                js.add_task([=] { updateLambda(y, x); });
-            }
-        }
-
-        js.wait_until_finish();
-        */
-
-
 
         for (unsigned int y = 0; y < m_rows; y++) {
             for (int x = 0; x < m_num_particles_per_rope; x++) {
@@ -255,15 +215,7 @@ namespace JE {
                     }
                 }
             }
-            */
-
-            /*std::thread horizontal_thread(&Cloth::RestrictHorizontalDistances, this, dt);
-            std::thread vertical_thread(&Cloth::RestrictVerticalDistances, this, dt);
-
-            horizontal_thread.join();
-            vertical_thread.join();*/
-
-            //m_horizontal_thread(&Cloth::RestrictHorizontalDistances, this, dt);
+     
             
             /*
             js.add_task(std::bind(&Cloth::RestrictHorizontalDistances, this, dt));
