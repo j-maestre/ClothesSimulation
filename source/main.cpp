@@ -17,7 +17,7 @@
 //#define SHOW_ROPES
 
 std::atomic<bool> keep_running(true); 
-//std::atomic<float> dt(0.01f);
+std::atomic<float> dt(0.01f);
 
 int main(int argc, char** argv){
 
@@ -71,7 +71,7 @@ int main(int argc, char** argv){
 
     unsigned int rows = 32;
     unsigned int cols = 32;
-    SetTargetFPS(120);
+    //SetTargetFPS(120);
 
     Color black = { 0,0,0,0 };
     Color red = {255, 10, 10, 255};
@@ -170,11 +170,42 @@ int main(int argc, char** argv){
 #ifdef MULTITHREAD
     // ----- Physiscs thread ----- 
     std::thread physics([&courtain1, &courtain2, &mtx]() {
+        
+        const float fixed_time_step = 1.0f / 60.0f;
+        auto previous_time = std::chrono::high_resolution_clock::now();
+
+
         while (keep_running) {
             std::lock_guard<std::mutex> lock(mtx);
-            courtain1.Update(0.0f);
-            courtain2.Update(0.0f);
-           }
+            auto current_time = std::chrono::high_resolution_clock::now();
+            std::chrono::duration elapsed = current_time - previous_time;
+
+            float delta_time = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() / 1000.0f;
+            float acum = delta_time;
+
+            //static float acum = dt.load();
+
+
+            while (acum < fixed_time_step) {
+                //printf("wait... DT: %f/%f \n", acum, fixed_time_step);
+                auto loop_time = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<float> loop_elapsed = loop_time - current_time;
+
+                // Incrementar el acumulador con el tiempo transcurrido en cada iteración
+                acum += loop_elapsed.count();
+
+                // Actualizar current_time para la siguiente iteración
+                current_time = loop_time;
+
+            }
+
+            //printf("GO\n");
+            courtain1.Update(dt.load());
+            courtain2.Update(dt.load());
+            
+
+            previous_time = current_time;
+        }
         printf("Custom Thread closed\n");
     });
     // ---------------------------
@@ -257,10 +288,11 @@ int main(int argc, char** argv){
 
 
         
+        dt.store(GetFrameTime());
 
         if (GetTime() > 2.0f) {
 
-            float dt = GetFrameTime(); 
+            //float dt = GetFrameTime(); 
             
             //fps_counter += std::to_string(dt) + "\n";
             //float smooth_delta_time = 0.0f;

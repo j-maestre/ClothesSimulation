@@ -172,6 +172,7 @@ namespace JE {
 
     void Cloth::Update(float dt/*, JobSystem& js*/) {
 
+        //printf("UPDATE DT: %f\n", dt);
        
 
        for (unsigned int y = 0; y < m_rows; y++) {
@@ -211,9 +212,10 @@ namespace JE {
 
 
         //float accumulator = dt;
+        //printf("Accumulator %f/%f\n", accumulator, m_fixed_time_step);
         //static int frame = 0;
-        //while (accumulator <= m_fixed_time_step) {
-            //printf("%d Accumulator %f/%f\n", frame, accumulator, m_fixed_time_step);
+        //while (accumulator < m_fixed_time_step) {
+            //printf("%d Accumulator %f/%f ----- dt: %f\n", frame, accumulator, m_fixed_time_step, dt);
 
             //float custom_dt = m_fixed_time_step / m_jakobsenIterations;
 
@@ -267,7 +269,6 @@ namespace JE {
                         UpdateJaksobenParticlesPair(*this, previous, current);
                     }
                 }
-
 
             }
 
