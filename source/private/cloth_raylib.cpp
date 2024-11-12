@@ -31,6 +31,8 @@ namespace JE {
 		float scale = 0.01f;
 
 		int index = 0;
+		m_sphere_matrices.clear();
+
 		for (unsigned int row = 0; row < m_rows; row++) {
 			for (int i = 0; i < m_num_particles_per_rope; i++) {
 
