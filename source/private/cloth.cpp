@@ -15,7 +15,7 @@ namespace JE {
 
     }
 
-    inline void Cloth::UpdateJaksobenParticlesPair(Cloth& cloth, Point* previous, Point* actual, float dt) {
+    inline void Cloth::UpdateJaksobenParticlesPair(Cloth& cloth, Point* previous, Point* actual) {
 
         float distance = sqrtf(pow(previous->position.x - actual->position.x, 2.0f) + pow(previous->position.y - actual->position.y, 2.0f) + pow(previous->position.z - actual->position.z, 2.0f));
         float distanceError = distance - cloth.m_desired_distance_per_rope;
@@ -147,12 +147,13 @@ namespace JE {
         m_ropes[y][x].fixed = fixed;
     }
 
+    /*
     void Cloth::RestrictHorizontalDistances(float dt) {
         for (unsigned int y = 0; y < m_rows; y++) {
             for (int x = 1; x < m_num_particles_per_rope; x++) {
                 Point* previous = &m_ropes[y][x - 1];
                 Point* current = &m_ropes[y][x];
-                UpdateJaksobenParticlesPair(*this, previous, current, dt);
+                UpdateJaksobenParticlesPair(*this, previous, current);
             }
         }
     }
@@ -162,13 +163,15 @@ namespace JE {
             for (int x = 0; x < m_num_particles_per_rope; x++) {
                 Point* previous = &m_ropes[y - 1][x];
                 Point* current = &m_ropes[y][x];
-                UpdateJaksobenParticlesPair(*this, previous, current, dt);
+                UpdateJaksobenParticlesPair(*this, previous, current);
             }
         }
     }
-
+    */
 
     void Cloth::Update(float dt/*, JobSystem& js*/) {
+
+       
 
         for (unsigned int y = 0; y < m_rows; y++) {
             for (int x = 0; x < m_num_particles_per_rope; x++) {
@@ -193,59 +196,83 @@ namespace JE {
             }
 
         }
+        
+        //float custom_dt = dt / m_jakobsenIterations;
 
+        //unsigned int custom_jaksoben_iterations= (int)(m_jakobsenIterations * (dt / m_fixed_time_step));
+        //custom_jaksoben_iterations = std::clamp(custom_jaksoben_iterations, m_min_jakobsenIterations, m_max_jakobsenIterations);
+        
+        //float timestep_factor = std::clamp(dt / m_fixed_time_step, 0.8f, 1.2f);
+        //int custom_jaksoben_iterations = (int)(m_jakobsenIterations * timestep_factor);
+        //printf("ITERATIONS: %d\n", custom_jaksoben_iterations);
         // Jakobsen Horizontal
-        for (int iterations = 0; iterations < m_jakobsenIterations; iterations++) {
 
-            /*
-            for (int y = 0; y < m_rows; y++) {
-                for (int x = 0; x < m_num_particles_per_rope; x++) {
 
-                    if (x > 0) {
+
+        //float accumulator = dt;
+        //static int frame = 0;
+        //while (accumulator <= m_fixed_time_step) {
+            //printf("%d Accumulator %f/%f\n", frame, accumulator, m_fixed_time_step);
+
+            //float custom_dt = m_fixed_time_step / m_jakobsenIterations;
+
+
+            for (int iterations = 0; iterations < m_jakobsenIterations; iterations++) {
+
+                // Previous logic for explain in video (less fps)
+                /*
+                for (int y = 0; y < m_rows; y++) {
+                    for (int x = 0; x < m_num_particles_per_rope; x++) {
+
+                        if (x > 0) {
+                            Point* previous = &m_ropes[y][x - 1];
+                            Point* current = &m_ropes[y][x];
+                            UpdateJaksobenParticlesPair(*this, previous, current, dt);
+                        }
+
+                        if (y > 0) {
+
+                            Point* previous = &m_ropes[y - 1][x];
+                            Point* current = &m_ropes[y][x];
+                            UpdateJaksobenParticlesPair(*this, previous, current, dt);
+                        }
+                    }
+                }
+
+
+                /*
+                js.add_task(std::bind(&Cloth::RestrictHorizontalDistances, this, dt));
+                js.add_task(std::bind(&Cloth::RestrictVerticalDistances, this, dt));
+
+                js.wait_until_finish();
+                */
+
+
+                // Restringir distancias horizontales (entre puntos en una misma fila)
+
+                for (unsigned int y = 0; y < m_rows; y++) {
+                    for (int x = 1; x < m_num_particles_per_rope; x++) {
                         Point* previous = &m_ropes[y][x - 1];
                         Point* current = &m_ropes[y][x];
-                        UpdateJaksobenParticlesPair(*this, previous, current, dt);
+                        UpdateJaksobenParticlesPair(*this, previous, current);
                     }
+                }
 
-                    if (y > 0) {
-
+                // Restringir distancias verticales (entre puntos en diferentes filas)
+                for (unsigned int y = 1; y < m_rows; y++) {
+                    for (int x = 0; x < m_num_particles_per_rope; x++) {
                         Point* previous = &m_ropes[y - 1][x];
                         Point* current = &m_ropes[y][x];
-                        UpdateJaksobenParticlesPair(*this, previous, current, dt);
+                        UpdateJaksobenParticlesPair(*this, previous, current);
                     }
                 }
-            }
-     
-            
-            /*
-            js.add_task(std::bind(&Cloth::RestrictHorizontalDistances, this, dt));
-            js.add_task(std::bind(&Cloth::RestrictVerticalDistances, this, dt));
-
-            js.wait_until_finish();
-            */
 
 
-            // Restringir distancias horizontales (entre puntos en una misma fila)
-           
-            for (unsigned int y = 0; y < m_rows; y++) {
-                for (int x = 1; x < m_num_particles_per_rope; x++) {
-                    Point* previous = &m_ropes[y][x - 1];
-                    Point* current = &m_ropes[y][x];
-                    UpdateJaksobenParticlesPair(*this, previous, current, dt);
-                }
             }
 
-            // Restringir distancias verticales (entre puntos en diferentes filas)
-            for (unsigned int y = 1; y < m_rows; y++) {
-                for (int x = 0; x < m_num_particles_per_rope; x++) {
-                    Point* previous = &m_ropes[y - 1][x];
-                    Point* current = &m_ropes[y][x];
-                    UpdateJaksobenParticlesPair(*this, previous, current, dt);
-                }
-            }
-            
-
-        }
+            //accumulator += dt;
+        //}
+        //frame++;
     }
 
 };

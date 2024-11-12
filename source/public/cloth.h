@@ -39,14 +39,16 @@ namespace JE {
 		unsigned int m_width;
 		unsigned int m_height;
 
-		float m_timeStep = 0.01f;
+		float m_fixed_time_step = 1.0f/10.0f;
 		unsigned int m_jakobsenIterations = 50;
+		unsigned int m_min_jakobsenIterations = 30;
+		unsigned int m_max_jakobsenIterations = 60;
 		float m_gravity = -9.81f;
 
 		std::vector<Point*> m_ropes;
 	private:
 
-		static inline void UpdateJaksobenParticlesPair(Cloth& c, Point* first, Point* second, float dt);
+		static inline void UpdateJaksobenParticlesPair(Cloth& c, Point* first, Point* second);
 		void RestrictHorizontalDistances(float dt);
 		void RestrictVerticalDistances(float dt);
 	};

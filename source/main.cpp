@@ -53,7 +53,10 @@ int main(int argc, char** argv){
     Vector3 cubePosition = { 0.0f, 0.0f, 10.0f };
     float cubeSize = 2.0f;
 
-    SetTargetFPS(60);
+
+    unsigned int rows = 64;
+    unsigned int cols = 64;
+    SetTargetFPS(120);
 
     Color black = { 0,0,0,0 };
     Color red = {255, 10, 10, 255};
@@ -95,9 +98,6 @@ int main(int argc, char** argv){
     //JE::WindTurbine turbine(JE::Vec3{ 0.1f, 0.1f, 0.1f }, JE::Vec3{1.0f, 1.0f, 0.1f}, 50.0f, 50.0f, 10.0f);
 
     rlImGuiSetup(true);
-
-    unsigned int rows = 32;
-    unsigned int cols = 32;
 
     JE::ClotheRaylib cloth(rows, cols, 5.0f, 5.0f);
     JE::ClotheRaylib courtain1(rows, cols, 10.0f, 10.0f);
@@ -230,9 +230,9 @@ int main(int argc, char** argv){
 
         if (GetTime() > 2.0f) {
 
-            float smooth_delta_time = 0.0f;
             float dt = GetFrameTime();
-            smooth_delta_time = (1.0f - smoothing_factor) * smooth_delta_time + smoothing_factor * dt;
+            //float smooth_delta_time = 0.0f;
+            //smooth_delta_time = (1.0f - smoothing_factor) * smooth_delta_time + smoothing_factor * dt;
 
 #ifdef SHOW_ROPES
 
