@@ -88,6 +88,7 @@ namespace JE {
             delete[] p;
         }
 
+        m_ropes.clear();
     }
 
     void Cloth::InitClothe(Vec3 first_pos, float mass, float friction_factor) {
@@ -173,22 +174,22 @@ namespace JE {
 
        
 
-        for (unsigned int y = 0; y < m_rows; y++) {
+       for (unsigned int y = 0; y < m_rows; y++) {
             for (int x = 0; x < m_num_particles_per_rope; x++) {
                 if (!m_ropes[y][x].fixed) {
                     Vec3 current_position = m_ropes[y][x].position;
 
                     // Apply velocity and check collision
-                    Vec3 velocity = (m_ropes[y][x].position - m_ropes[y][x].previous_position) / dt;
+                    Vec3 velocity = (m_ropes[y][x].position - m_ropes[y][x].previous_position) / m_fixed_time_step;
 
                     // Apply gravity
-                    velocity.y += m_gravity * dt;
+                    velocity.y += m_gravity * m_fixed_time_step;
 
                     // Apply friction to velocity
                     velocity *= (1.0f - m_ropes[y][x].friction_factor);
 
                     // Update position using Verlet integration
-                    m_ropes[y][x].position += velocity * dt;
+                    m_ropes[y][x].position += velocity * m_fixed_time_step;
 
                     // Update previous position for the next frame
                     m_ropes[y][x].previous_position = current_position;

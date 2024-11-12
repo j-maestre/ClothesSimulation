@@ -39,7 +39,7 @@ namespace JE {
 		unsigned int m_width;
 		unsigned int m_height;
 
-		float m_fixed_time_step = 1.0f/10.0f;
+		float m_fixed_time_step = 1.0f/20.0f;
 		unsigned int m_jakobsenIterations = 50;
 		unsigned int m_min_jakobsenIterations = 30;
 		unsigned int m_max_jakobsenIterations = 60;

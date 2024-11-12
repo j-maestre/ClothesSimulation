@@ -13,11 +13,17 @@
 #include <chrono>
 #include <iostream>
 
+#define MULTITHREAD
 //#define SHOW_ROPES
+
+std::atomic<bool> keep_running(true); 
+//std::atomic<float> dt(0.01f);
 
 int main(int argc, char** argv){
 
-    JobSystem job_sys;
+    std::mutex mtx;
+
+    //JobSystem job_sys;
 
 
     // Inicializar la ventana
@@ -26,10 +32,20 @@ int main(int argc, char** argv){
     
     //const int screenWidth = GetMonitorWidth(0);
     //const int screenHeight = GetMonitorHeight(0);
-    InitWindow(screenWidth, screenHeight, "Hello Cube");
+#ifdef MULTITHREAD
+    InitWindow(screenWidth, screenHeight, "Multi thread cloth");
+#endif
+ 
+#ifndef MULTITHREAD
+    InitWindow(screenWidth, screenHeight, "Single thread cloth");
+#endif
+
     //SetWindowState(FLAG_FULLSCREEN_MODE);
     //HideCursor();
     //ShowCursor();
+    //SetConfigFlags(FLAG_VSYNC_HINT);
+    //SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+
     int refresh_rate = GetMonitorPhysicalHeight(0);
 
     const char* monitor_name = GetMonitorName(0);
@@ -41,7 +57,6 @@ int main(int argc, char** argv){
     //printf("Versión de OpenGL: %s\n", glVersion);
 
     
-    // Definir la c�mara
     Camera camera = { 0 };
     camera.position = { 0.0f, 5.0f, -10.0f };
     camera.target = { 0.0f, 5.0f, 0.0f };
@@ -54,8 +69,8 @@ int main(int argc, char** argv){
     float cubeSize = 2.0f;
 
 
-    unsigned int rows = 64;
-    unsigned int cols = 64;
+    unsigned int rows = 32;
+    unsigned int cols = 32;
     SetTargetFPS(120);
 
     Color black = { 0,0,0,0 };
@@ -150,6 +165,21 @@ int main(int argc, char** argv){
     cloth.SetTexture("assets/texture_0.png");
 
     const float smoothing_factor = 0.1f;
+    
+    
+#ifdef MULTITHREAD
+    // ----- Physiscs thread ----- 
+    std::thread physics([&courtain1, &courtain2, &mtx]() {
+        while (keep_running) {
+            std::lock_guard<std::mutex> lock(mtx);
+            courtain1.Update(0.0f);
+            courtain2.Update(0.0f);
+           }
+        printf("Custom Thread closed\n");
+    });
+    // ---------------------------
+#endif
+    std::string fps_counter = "FPS: \n";
 
     while (!WindowShouldClose()) {
 
@@ -230,7 +260,9 @@ int main(int argc, char** argv){
 
         if (GetTime() > 2.0f) {
 
-            float dt = GetFrameTime();
+            float dt = GetFrameTime(); 
+            
+            //fps_counter += std::to_string(dt) + "\n";
             //float smooth_delta_time = 0.0f;
             //smooth_delta_time = (1.0f - smoothing_factor) * smooth_delta_time + smoothing_factor * dt;
 
@@ -254,8 +286,10 @@ int main(int argc, char** argv){
             //auto start = std::chrono::high_resolution_clock::now();
             
             
+#ifndef MULTITHREAD
             courtain1.Update(dt);
             courtain2.Update(dt);
+#endif
             /*
             courtain3.Update(GetFrameTime());
             courtain4.Update(GetFrameTime());
@@ -287,9 +321,9 @@ int main(int argc, char** argv){
 
             start = std::chrono::high_resolution_clock::now();
 
-            */
             courtain1.DrawClothe();
             courtain2.DrawClothe();
+            */
             /*courtain3.DrawClothe();
             courtain4.DrawClothe();
             courtain5.DrawClothe();*/
@@ -307,7 +341,8 @@ int main(int argc, char** argv){
         cloth.GetPosition(1, 0, tmp_x, tmp_y, tmp_z);
         printf("Second x:%f y:%f, z:%f\n", tmp_x, tmp_y, tmp_z);*/
             
-
+        courtain1.DrawClothe();
+        courtain2.DrawClothe();
 
         //DrawSphere(Vector3{0.0f, 5.0f, 0.0f}, 0.5f, red);
 
@@ -355,10 +390,21 @@ int main(int argc, char** argv){
         DrawFPS(10, 10);
 
         EndDrawing();
+        
     }
+
+#ifdef MULTITHREAD
+    keep_running = false;
+    if (physics.joinable()) {
+        physics.join();
+    }
+#endif
+
+    printf("%s", fps_counter.c_str());
 
     rlImGuiShutdown();
     CloseWindow();
+
 
     return 0;
 }
