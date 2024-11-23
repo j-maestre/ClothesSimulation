@@ -98,15 +98,15 @@ int main(int argc, char** argv){
 
     printf("Ropes created correctly!\n");
 
+    rope.SetFixed(0);
+    rope2.SetFixed(0);
+    rope3.SetFixed(0);
     rope3.SetFixed(99);
 
     rope.SetColor(BLUE);
     rope2.SetColor(RED);
     rope3.SetColor(GREEN);
 
-
-
-    //printf("Lenght-> %f\n Num particles %d", rope.m_lenght, rope.m_numParticles);
 
     float speed = 2.5f;
     float amplitude = 2.0f;
@@ -256,46 +256,11 @@ int main(int argc, char** argv){
             courtain2.SetPosition(0, 0, x, y, z);
         }
 
-
-        
-
-        if (GetTime() > 2.0f) {
-
-            //float dt = GetFrameTime(); 
-            
-            //fps_counter += std::to_string(dt) + "\n";
-            //float smooth_delta_time = 0.0f;
-            //smooth_delta_time = (1.0f - smoothing_factor) * smooth_delta_time + smoothing_factor * dt;
-
 #ifdef SHOW_ROPES
-
-        //if (IsKeyDown(KEY_SPACE)) {
-
-            //rope.Update(1.0f / 30.0f);
-            //rope2.Update(1.0f / 30.0f);
-            //rope3.Update(1.0f / 30.0f);
-        //}
-        
-#endif
-
-            //cloth.Update(GetFrameTime());
-            //cloth.DrawClothe();
-
-            
-
-            //auto start = std::chrono::high_resolution_clock::now();
-            
-            
-#ifndef MULTITHREAD
-            courtain1.Update(dt);
-            courtain2.Update(dt);
-#endif
-        }
-
-
         rope.DrawRope();
         rope2.DrawRope();
         rope3.DrawRope();
+#endif
             
         courtain1.DrawClothe();
         courtain2.DrawClothe();

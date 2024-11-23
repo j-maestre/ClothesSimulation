@@ -35,7 +35,7 @@ void Rope::InitRope(Vec3 first_pos, Vec3 direction, float mass, float friction_f
         
         m_points[i].mass = mass;
         m_points[i].friction_factor = friction_factor * 0.1f;
-        m_points[i].fixed = i == 0; // We fix only the first point
+        m_points[i].fixed = false;
 
         //unsigned int numberOfSegments = m_numParticles - 1;
 
@@ -165,7 +165,6 @@ void Rope::Update(float dt){
     }
 
 }
-
 
 void Rope::ApplyWindTurbine(WindTurbine wind, float dt){
     for (int i = 0; i < m_numParticles; i++) {
