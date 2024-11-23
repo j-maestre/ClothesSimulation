@@ -5,7 +5,7 @@
 #include "imgui_impl_raylib.h"
 #include "imgui.h"
 
-#include "public/rope_physics.h"
+#include "public/jamon_physics.h"
 #include "public/rope_raylib.h"
 #include "public/clothe_raylib.h"
 #include "public/job_system.h"
@@ -14,12 +14,12 @@
 #include <iostream>
 
 #define MULTITHREAD
-//#define SHOW_ROPES
-
-std::atomic<bool> keep_running(true); 
-std::atomic<float> dt(0.01f);
+#define SHOW_ROPES
 
 int main(int argc, char** argv){
+
+    //Shader shader = LoadShader("vertex_shader","fragment_shader");
+
 
     std::mutex mtx;
 
@@ -104,9 +104,11 @@ int main(int argc, char** argv){
     rope2.SetColor(RED);
     rope3.SetColor(GREEN);
 
+
+
     //printf("Lenght-> %f\n Num particles %d", rope.m_lenght, rope.m_numParticles);
 
-    float speed = 10.0f;
+    float speed = 2.5f;
     float amplitude = 2.0f;
 
     //Vec3 position, Vec3 direction, float strength, float spread_angle, float max_distance, bool enabled = true
@@ -167,50 +169,18 @@ int main(int argc, char** argv){
     const float smoothing_factor = 0.1f;
     
     
-#ifdef MULTITHREAD
-    // ----- Physiscs thread ----- 
-    std::thread physics([&courtain1, &courtain2, &mtx]() {
-        
-        const float fixed_time_step = 1.0f / 60.0f;
-        auto previous_time = std::chrono::high_resolution_clock::now();
 
-
-        while (keep_running) {
-            std::lock_guard<std::mutex> lock(mtx);
-            auto current_time = std::chrono::high_resolution_clock::now();
-            std::chrono::duration elapsed = current_time - previous_time;
-
-            float delta_time = std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() / 1000.0f;
-            float acum = delta_time;
-
-            //static float acum = dt.load();
-
-
-            while (acum < fixed_time_step) {
-                //printf("wait... DT: %f/%f \n", acum, fixed_time_step);
-                auto loop_time = std::chrono::high_resolution_clock::now();
-                std::chrono::duration<float> loop_elapsed = loop_time - current_time;
-
-                // Incrementar el acumulador con el tiempo transcurrido en cada iteración
-                acum += loop_elapsed.count();
-
-                // Actualizar current_time para la siguiente iteración
-                current_time = loop_time;
-
-            }
-
-            //printf("GO\n");
-            courtain1.Update(dt.load());
-            courtain2.Update(dt.load());
-            
-
-            previous_time = current_time;
-        }
-        printf("Custom Thread closed\n");
-    });
-    // ---------------------------
-#endif
     std::string fps_counter = "FPS: \n";
+
+    JE::JamonPhysics::get_instance()->add_clothe(&courtain1);
+    JE::JamonPhysics::get_instance()->add_clothe(&courtain2);
+
+    JE::JamonPhysics::get_instance()->add_rope(&rope);
+    JE::JamonPhysics::get_instance()->add_rope(&rope2);
+    JE::JamonPhysics::get_instance()->add_rope(&rope3);
+
+    JE::JamonPhysics::get_instance()->init_clothe_thread();
+    JE::JamonPhysics::get_instance()->init_rope_thread();
 
     while (!WindowShouldClose()) {
 
@@ -288,7 +258,6 @@ int main(int argc, char** argv){
 
 
         
-        dt.store(GetFrameTime());
 
         if (GetTime() > 2.0f) {
 
@@ -301,13 +270,12 @@ int main(int argc, char** argv){
 #ifdef SHOW_ROPES
 
         //if (IsKeyDown(KEY_SPACE)) {
-            rope.Update(GetFrameTime());
-            rope2.Update(GetFrameTime());
-            rope3.Update(GetFrameTime());
+
+            //rope.Update(1.0f / 30.0f);
+            //rope2.Update(1.0f / 30.0f);
+            //rope3.Update(1.0f / 30.0f);
         //}
-            rope.DrawRope();
-            rope2.DrawRope();
-            rope3.DrawRope();
+        
 #endif
 
             //cloth.Update(GetFrameTime());
@@ -322,56 +290,12 @@ int main(int argc, char** argv){
             courtain1.Update(dt);
             courtain2.Update(dt);
 #endif
-            /*
-            courtain3.Update(GetFrameTime());
-            courtain4.Update(GetFrameTime());
-            courtain5.Update(GetFrameTime());
-            */
-            
-            
-            
-            /*
-            job_sys.add_task(std::bind(&JE::Cloth::Update, &courtain1, smooth_delta_time));
-            job_sys.add_task(std::bind(&JE::Cloth::Update, &courtain2, smooth_delta_time));
-            job_sys.add_task(std::bind(&JE::Cloth::Update, &courtain3, dt));
-            job_sys.add_task(std::bind(&JE::Cloth::Update, &courtain4, dt));
-            job_sys.add_task(std::bind(&JE::Cloth::Update, &courtain5, dt));
-            
-            job_sys.wait_until_finish();
-            */
-            
-
-            /*auto end = std::chrono::high_resolution_clock::now();
-            std::chrono::duration<float, std::milli> duration = end - start;
-            std::cout << "Tiempo de ejecucion antes: " << duration.count() << " ms" << std::endl;
-            
-            
-            end = std::chrono::high_resolution_clock::now();
-            duration = end - start;
-            std::cout << "Tiempo de ejecucion despues: " << duration.count() << " ms" << std::endl;
-
-
-            start = std::chrono::high_resolution_clock::now();
-
-            courtain1.DrawClothe();
-            courtain2.DrawClothe();
-            */
-            /*courtain3.DrawClothe();
-            courtain4.DrawClothe();
-            courtain5.DrawClothe();*/
-
-           /* end = std::chrono::high_resolution_clock::now();
-            duration = end - start;
-            std::cout << "Tiempo de ejecucion draw: " << duration.count() << " ms" << std::endl;
-            */
-
         }
 
-        /*float tmp_x, tmp_y, tmp_z;
-        cloth.GetPosition(0, 0, tmp_x, tmp_y, tmp_z);
-        printf("First x:%f y:%f, z:%f\n", tmp_x, tmp_y, tmp_z);
-        cloth.GetPosition(1, 0, tmp_x, tmp_y, tmp_z);
-        printf("Second x:%f y:%f, z:%f\n", tmp_x, tmp_y, tmp_z);*/
+
+        rope.DrawRope();
+        rope2.DrawRope();
+        rope3.DrawRope();
             
         courtain1.DrawClothe();
         courtain2.DrawClothe();
@@ -417,20 +341,11 @@ int main(int argc, char** argv){
 
         rlImGuiEnd();
 
-        //int fps = GetFPS();
-        //DrawText("Hello Cube!", 10, 10, 20, DARKGRAY);
         DrawFPS(10, 10);
-
         EndDrawing();
-        
     }
 
-#ifdef MULTITHREAD
-    keep_running = false;
-    if (physics.joinable()) {
-        physics.join();
-    }
-#endif
+    JE::JamonPhysics::get_instance()->close_threads();
 
     printf("%s", fps_counter.c_str());
 

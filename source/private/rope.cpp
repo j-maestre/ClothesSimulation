@@ -39,8 +39,8 @@ void Rope::InitRope(Vec3 first_pos, Vec3 direction, float mass, float friction_f
 
         //unsigned int numberOfSegments = m_numParticles - 1;
 
-        float ropeLength = sqrt(pow(first_pos.x - second_pos.x, 2) + pow(first_pos.y - second_pos.y, 2) + pow(first_pos.z - second_pos.z, 2));
-        m_desiredDistance = ropeLength / (m_numParticles - 1);
+        float ropeLength = sqrt(pow(first_pos.x - second_pos.x, 2.0f) + pow(first_pos.y - second_pos.y, 2.0f) + pow(first_pos.z - second_pos.z, 2.0f));
+        m_desiredDistance = ropeLength / (float)(m_numParticles - 1);
 
 
     }
@@ -78,23 +78,23 @@ void Rope::Update(float dt){
 
 
             // Calculating previous velocity
-            float xVelocity = (m_points[i].position.x - m_points[i].previous_position.x) / m_timeStep;
-            float yVelocity = (m_points[i].position.y - m_points[i].previous_position.y) / m_timeStep;
-            float zVelocity = (m_points[i].position.z - m_points[i].previous_position.z) / m_timeStep;
+            float xVelocity = (m_points[i].position.x - m_points[i].previous_position.x) / dt;
+            float yVelocity = (m_points[i].position.y - m_points[i].previous_position.y) / dt;
+            float zVelocity = (m_points[i].position.z - m_points[i].previous_position.z) / dt;
 
             float gravity_force = m_gravity * m_points[i].mass;
             float acceleration_y = gravity_force / m_points[i].mass;
 
-            yVelocity += gravity_force * m_timeStep;
+            yVelocity += gravity_force * dt;
 
-            xVelocity *= (1 - m_points[i].friction_factor);
-            yVelocity *= (1 - m_points[i].friction_factor);
-            zVelocity *= (1 - m_points[i].friction_factor);
+            xVelocity *= (1.0f - m_points[i].friction_factor);
+            yVelocity *= (1.0f - m_points[i].friction_factor);
+            zVelocity *= (1.0f - m_points[i].friction_factor);
             
             // Update new position using Verlet
-            m_points[i].position.x += xVelocity * m_timeStep;
-            m_points[i].position.y += yVelocity * m_timeStep;
-            m_points[i].position.z += zVelocity * m_timeStep;
+            m_points[i].position.x += xVelocity * dt;
+            m_points[i].position.y += yVelocity * dt;
+            m_points[i].position.z += zVelocity * dt;
 
             m_points[i].previous_position.x = x_tmp;
             m_points[i].previous_position.y = y_tmp;
@@ -161,10 +161,6 @@ void Rope::Update(float dt){
                     previous.position.z += 0.5f * (zDirection * distanceError);
                 }
             }
-            //float xDirection = xDifference / sqrt(pow(xDifference, 2) + pow(yDifference, 2));
-            //float yDirection = yDifference / sqrt(pow(xDifference, 2) + pow(yDifference, 2));
-
-            
         }
     }
 

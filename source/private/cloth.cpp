@@ -181,16 +181,16 @@ namespace JE {
                     Vec3 current_position = m_ropes[y][x].position;
 
                     // Apply velocity and check collision
-                    Vec3 velocity = (m_ropes[y][x].position - m_ropes[y][x].previous_position) / m_fixed_time_step;
+                    Vec3 velocity = (m_ropes[y][x].position - m_ropes[y][x].previous_position) / dt;
 
                     // Apply gravity
-                    velocity.y += m_gravity * m_fixed_time_step;
+                    velocity.y += m_gravity * dt;
 
                     // Apply friction to velocity
                     velocity *= (1.0f - m_ropes[y][x].friction_factor);
 
                     // Update position using Verlet integration
-                    m_ropes[y][x].position += velocity * m_fixed_time_step;
+                    m_ropes[y][x].position += velocity * dt;
 
                     // Update previous position for the next frame
                     m_ropes[y][x].previous_position = current_position;
