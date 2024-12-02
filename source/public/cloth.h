@@ -2,6 +2,7 @@
 #include "rope.h"
 #include "vector"
 #include "job_system.h"
+#include "common.h"
 
 namespace JE {
 
@@ -14,12 +15,12 @@ namespace JE {
 		Cloth(Cloth&&);
 		~Cloth();
 
-		void InitClothe(Vec3 first_pos, float mass, float friction_factor);
+		virtual void InitClothe(Vec3 first_pos, float mass, float friction_factor);
 		
 		void GetPosition(unsigned int row, unsigned int index, float& x, float& y, float& z);
 		void SetPosition(unsigned int row, unsigned int index, float x, float y, float z);
 		void SetFixed(unsigned int x, unsigned int y, bool fixed = true);
-
+		const std::vector<Vertex>& GetVertices() const { return m_vertices; }
 
 		void Update(float dt/*, JobSystem& js*/);
 		virtual void DrawClothe() = 0;
@@ -51,5 +52,7 @@ namespace JE {
 		static inline void UpdateJaksobenParticlesPair(Cloth& c, Point* first, Point* second);
 		void RestrictHorizontalDistances(float dt);
 		void RestrictVerticalDistances(float dt);
+
+		std::vector<Vertex> m_vertices;
 	};
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include "rope.h"
+#include "common.h"
 
 namespace JE {
 
