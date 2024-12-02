@@ -1,6 +1,6 @@
 ﻿#include "public/cloth.h"
 #include "assert.h"
-
+#include "math.h"
 
 namespace JE {
 
@@ -96,6 +96,7 @@ namespace JE {
         assert(m_num_particles_per_rope > 1 && "El numero de particulas debe ser mayor que 1");
 
         m_ropes.resize(m_rows);
+        m_vertices.reserve(m_rows * m_columns);
 
         // Calcula la posici�n del �ltimo punto en la cuerda
         Vec3 second_pos = first_pos;
@@ -119,12 +120,60 @@ namespace JE {
                 float y = current_row_pos.y;
                 float z = first_pos.z; // +(m_desired_distance_per_rope * col);
 
-                // Asigna la posici�n calculada al punto
+                // Asigna la posicion calculada al punto
                 m_ropes[row][col].position = Vec3(x, y, z);
+                Vertex v;
+                v.pos = { x, y, z };
+                m_vertices.push_back(v);
                 m_ropes[row][col].previous_position = Vec3(x, y, z);
                 m_ropes[row][col].mass = mass;
                 m_ropes[row][col].friction_factor = friction_factor * 0.1f;
             }
+        }
+
+        
+        // Create normals
+        for(unsigned int i = 0; i < (m_rows * m_columns) - 2; i+=3){
+
+            Vec3 before  = m_vertices[i + 0].pos;
+            Vec3 current = m_vertices[i + 1].pos;
+            Vec3 after   = m_vertices[i + 2].pos;
+
+            Vec3 direction_before = before - current;
+            Vec3 direction_after = after - current;
+
+            Vec3 normal =  direction_before.Cross(direction_after);
+            Vec3 n_normal = normal.Normalize();
+
+            m_vertices[i + 0].normal = n_normal;
+            m_vertices[i + 1].normal = n_normal;
+            m_vertices[i + 2].normal = n_normal;
+        }
+
+        // Create UV's
+        for (unsigned int i = 0; i < (m_rows * m_columns) - 5; i += 6) {
+            int axisU = 0;
+            int axisV = 0;
+
+            float uPosVal = 1;
+            float vPosVal = 1;
+
+            switch (i / 12) {
+            case 0: axisU = 1; axisV = 2; break;
+            case 1: axisU = 0; axisV = 2; break;
+            case 2: axisU = 0; axisV = 1; break;
+            }
+
+            if ((i / 6) % 2 == 1) uPosVal = 0;
+
+            for (int j = 0; j < 6; j++) {
+                int tmp = 0.0f;
+
+                m_vertices[i + j].pos[axisU] < 0 ? m_vertices[i + j].uv.x = (1.0f - uPosVal) : m_vertices[i + j].uv.x = uPosVal;
+                m_vertices[i + j].pos[axisV] < 0 ? m_vertices[i + j].uv.y = (1.0f - vPosVal) : m_vertices[i + j].uv.y = vPosVal;
+
+            }
+
         }
 
 

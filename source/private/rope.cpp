@@ -7,7 +7,8 @@
 namespace JE {
 
 
-void Rope::InitRope(Vec3 first_pos, Vec3 direction, float mass, float friction_factor){
+
+    void Rope::InitRope(Vec3 first_pos, Vec3 direction, float mass, float friction_factor){
 
     
     m_points = new Point[m_numParticles];

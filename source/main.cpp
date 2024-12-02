@@ -168,6 +168,12 @@ int main(int argc, char** argv){
 
     const float smoothing_factor = 0.1f;
     
+
+    courtain1.SetShader("assets/fragment_shader.fs", "assets/vertex_shader.vs");
+    courtain1.SetTexture("assets/texture_0.png");
+    
+    courtain2.SetShader("assets/fragment_shader.fs", "assets/vertex_shader.vs");
+    courtain2.SetTexture("assets/texture_0.png");
     
 
     std::string fps_counter = "FPS: \n";
@@ -190,7 +196,7 @@ int main(int argc, char** argv){
 
 
         BeginDrawing();
-        ClearBackground(black);
+        ClearBackground(GRAY);
         BeginMode3D(camera);
 
         float x, y, z;
@@ -262,6 +268,8 @@ int main(int argc, char** argv){
         rope3.DrawRope();
 #endif
             
+        courtain1.SetCamera(camera);
+        courtain2.SetCamera(camera);
         courtain1.DrawClothe();
         courtain2.DrawClothe();
 
