@@ -75,8 +75,8 @@ namespace JE {
 		m_mesh.vertexCount = m_columns * m_rows;
 		m_mesh.triangleCount = indices.size() / 3;
 
-		UploadMesh(&m_mesh, true);
-		m_model = LoadModelFromMesh(m_mesh);
+		//UploadMesh(&m_mesh, true);
+		//m_model = LoadModelFromMesh(m_mesh);
 
 
 	}
@@ -144,7 +144,7 @@ namespace JE {
 		SetShaderValueMatrix(m_shader, GetShaderLocation(m_shader, "projection"), projection);
 		*/
 
-		DrawModel(m_model, { 0.0f, 0.0f, 0.0f }, 1.0f, RED);
+		DrawModel(m_model, { 1.0f, 5.0f, 1.0f }, 1.0f, WHITE);
 	
 	}
 
@@ -155,7 +155,7 @@ namespace JE {
 		bool ret = false;
 		if (path != nullptr) {
 			m_tex = LoadTexture(path);
-
+			unsigned int id = GetShaderLocation(m_shader, "texture0");
 			SetShaderValueTexture(m_shader, GetShaderLocation(m_shader, "texture0"), m_tex);
 			m_model.materials[0].maps[MATERIAL_MAP_DIFFUSE].texture = m_tex;
 			if (m_tex.id != 0) ret = true;
@@ -167,10 +167,17 @@ namespace JE {
 
 	bool ClotheRaylib::SetShader(const char* fragment, const char* vertex){
 		m_shader = LoadShader(vertex, fragment);
+		//m_shader = LoadShader(NULL, NULL);
 		
-		if(m_shader.id != 0) m_model.materials[0].shader = m_shader;
+		if (m_shader.id == 0) {
+			TraceLog(LOG_ERROR, "Error al cargar el shader.");
+			return false;
+		}
 		
-		return m_shader.id != 0;
+		m_model.materials[0].shader = m_shader;
+		
+		
+		return true;
 	}
 
 }

@@ -17,7 +17,10 @@ namespace JE {
 
     inline void Cloth::UpdateJaksobenParticlesPair(Cloth& cloth, Point* previous, Point* actual) {
 
-        float distance = sqrtf(pow(previous->position.x - actual->position.x, 2.0f) + pow(previous->position.y - actual->position.y, 2.0f) + pow(previous->position.z - actual->position.z, 2.0f));
+        float distance = sqrtf(pow(previous->position.x - actual->position.x, 2.0f) + 
+                               pow(previous->position.y - actual->position.y, 2.0f) + 
+                               pow(previous->position.z - actual->position.z, 2.0f));
+
         float distanceError = distance - cloth.m_desired_distance_per_rope;
 
         // The direction in which particles should be pulled or pushed
@@ -27,7 +30,6 @@ namespace JE {
 
         // Make unit vector
         float distanceSquared = (xDifference * xDifference) + (yDifference * yDifference) + (zDifference * zDifference);
-        //float distanceSquared = (xDifference + yDifference + zDifference);
 
         if (distanceSquared > 0.0f) {
             float distance = sqrtf(distanceSquared);

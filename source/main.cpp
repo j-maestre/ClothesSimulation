@@ -14,7 +14,8 @@
 #include <iostream>
 
 #define MULTITHREAD
-#define SHOW_ROPES
+//#define SHOW_ROPES
+//#define IMGUI_ENABLED
 
 int main(int argc, char** argv){
 
@@ -101,7 +102,7 @@ int main(int argc, char** argv){
     rope.SetFixed(0);
     rope2.SetFixed(0);
     rope3.SetFixed(0);
-    rope3.SetFixed(99);
+    //rope3.SetFixed(99);
 
     rope.SetColor(BLUE);
     rope2.SetColor(RED);
@@ -116,43 +117,28 @@ int main(int argc, char** argv){
 
     rlImGuiSetup(true);
 
-    JE::ClotheRaylib cloth(rows, cols, 5.0f, 5.0f);
     JE::ClotheRaylib courtain1(rows, cols, 10.0f, 10.0f);
     JE::ClotheRaylib courtain2(rows, cols, 10.0f, 10.0f);
 
-    JE::ClotheRaylib courtain3(rows, cols, 10.0f, 10.0f);
-    JE::ClotheRaylib courtain4(rows, cols, 10.0f, 10.0f);
-    JE::ClotheRaylib courtain5(rows, cols, 10.0f, 10.0f);
-
-    cloth.InitClothe(JE::Vec3{ 0.0f, 5.0f, 0.0f }, 10.0f, 0.1f);
+   
     courtain1.InitClothe(JE::Vec3{ 10.0f, 5.0f, 10.0f }, 10.0f, 0.1f);
     courtain2.InitClothe(JE::Vec3{ 20.0f, 5.0f, 10.0f }, 10.0f, 0.1f);
 
-    courtain3.InitClothe(JE::Vec3{ 20.0f, -5.0f, 10.0f }, 10.0f, 0.1f);
-    courtain4.InitClothe(JE::Vec3{ 20.0f, -10.0f, 10.0f }, 10.0f, 0.1f);
-    courtain5.InitClothe(JE::Vec3{ 20.0f, -15.0f, 10.0f }, 10.0f, 0.1f);
 
     courtain1.SetColor(BLUE);
 
-
-
-    cloth.SetFixed(0,0);
-    cloth.SetFixed(cols - 1,0);
     
     courtain1.SetFixed(0,0);
     courtain1.SetFixed(cols - 1,0);
 
     courtain2.SetFixed(0,0);
     courtain2.SetFixed(cols - 1,0);
-    
-    courtain3.SetFixed(0,0);
-    courtain4.SetFixed(0,0);
-    courtain5.SetFixed(0,0);
 
 
 
-    float x_offset, y_offset, z_offset;
-    cloth.GetPosition(0, 11, x_offset, y_offset, z_offset);
+
+    float x_offset = 0.0f, y_offset = 0.0f, z_offset = 0.0f;
+    //cloth.GetPosition(0, 11, x_offset, y_offset, z_offset);
     
     bool opening = false;
     bool closing = false;
@@ -164,16 +150,15 @@ int main(int argc, char** argv){
     float courtains_speed = 7.5f;
 
 
-    cloth.SetTexture("assets/texture_0.png");
-
     const float smoothing_factor = 0.1f;
     
 
-    courtain1.SetShader("assets/fragment_shader.fs", "assets/vertex_shader.vs");
-    courtain1.SetTexture("assets/texture_0.png");
+    //courtain1.SetShader("assets/fragment_shader.fs", "assets/vertex_shader.vs");
+    //courtain1.SetShader("assets/fragment_shader.fs", "assets/vertex_shader.vs");
+    //courtain1.SetTexture("assets/texture_0.png");
     
-    courtain2.SetShader("assets/fragment_shader.fs", "assets/vertex_shader.vs");
-    courtain2.SetTexture("assets/texture_0.png");
+    //courtain2.SetShader("assets/fragment_shader.fs", "assets/vertex_shader.vs");
+    //courtain2.SetTexture("assets/texture_0.png");
     
 
     std::string fps_counter = "FPS: \n";
@@ -196,7 +181,7 @@ int main(int argc, char** argv){
 
 
         BeginDrawing();
-        ClearBackground(GRAY);
+        ClearBackground(BLACK);
         BeginMode3D(camera);
 
         float x, y, z;
@@ -210,9 +195,6 @@ int main(int argc, char** argv){
         rope3.GetPosition(0,x,y,z);
         rope3.SetPointPosition(0, rope_3_x_offset + cosf(GetTime() * speed) * 2.0f,y,z);
 #endif
-
-        cloth.GetPosition(cols - 1, 0, x,y,z);
-        cloth.SetPosition(cols - 1, 0, x_offset + (cosf(GetTime() * speed) * amplitude), y, z);
 
         // --- Wind turbine ---
         
@@ -268,19 +250,22 @@ int main(int argc, char** argv){
         rope3.DrawRope();
 #endif
             
-        courtain1.SetCamera(camera);
-        courtain2.SetCamera(camera);
-        courtain1.DrawClothe();
-        courtain2.DrawClothe();
+        //courtain1.SetCamera(camera);
+        //courtain2.SetCamera(camera);
+        //courtain1.DrawClothe();
+        //courtain2.DrawClothe();
+        courtain1.DrawWireFrame();
+        courtain2.DrawWireFrame();
 
         //DrawSphere(Vector3{0.0f, 5.0f, 0.0f}, 0.5f, red);
 
-        DrawCube(cubePosition, cubeSize, cubeSize, cubeSize, WHITE);
+        //DrawCube(cubePosition, cubeSize, cubeSize, cubeSize, WHITE);
         DrawCubeWires(cubePosition, cubeSize, cubeSize, cubeSize, DARKGRAY);
 
 
         EndMode3D();
-        
+#ifdef IMGUI_ENABLED
+
         rlImGuiBegin();
 
         ImGui::Text("Delta Time: %f", GetFrameTime());
@@ -313,6 +298,7 @@ int main(int argc, char** argv){
         }
 
         rlImGuiEnd();
+#endif
 
         DrawFPS(10, 10);
         EndDrawing();
