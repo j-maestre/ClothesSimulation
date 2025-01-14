@@ -14,8 +14,8 @@
 #include <iostream>
 
 #define MULTITHREAD
-//#define SHOW_ROPES
-//#define IMGUI_ENABLED
+#define SHOW_ROPES
+#define IMGUI_ENABLED
 
 int main(int argc, char** argv){
 
@@ -70,8 +70,8 @@ int main(int argc, char** argv){
     float cubeSize = 2.0f;
 
 
-    unsigned int rows = 32;
-    unsigned int cols = 32;
+    unsigned int rows = 64;
+    unsigned int cols = 64;
     //SetTargetFPS(120);
 
     Color black = { 0,0,0,0 };
@@ -90,10 +90,12 @@ int main(int argc, char** argv){
     float rope2_mass = 3.0f;
     float rope3_mass = 3.0f;
 
-    rope.InitRope(JE::Vec3{ 0.0f, 5.0f, 0.0f }, JE::Vec3{ 0.0f, -5.0f, 0.0f }, 1.0f, rope1_friction);
-    rope2.InitRope(JE::Vec3{ 0.0f, 5.0f, 0.0f }, JE::Vec3{ 0.0f, -5.0f, 0.0f }, 3.0f, rope2_friction);
+    float ropes_offset = -10.0f;
 
-    float rope_3_x_offset = 5.0f;
+    rope.InitRope(JE::Vec3{ ropes_offset, 5.0f, 0.0f }, JE::Vec3{ 0.0f, -5.0f, 0.0f }, 1.0f, rope1_friction);
+    rope2.InitRope(JE::Vec3{ ropes_offset, 5.0f, 0.0f }, JE::Vec3{ 0.0f, -5.0f, 0.0f }, 3.0f, rope2_friction);
+
+    float rope_3_x_offset = -15.0f;
     rope3.InitRope(JE::Vec3{ rope_3_x_offset , 5.0f, 0.0f }, JE::Vec3{ 0.0f , -5.0f, 0.0f }, 3.0f, rope3_friction);
 
 
@@ -102,14 +104,14 @@ int main(int argc, char** argv){
     rope.SetFixed(0);
     rope2.SetFixed(0);
     rope3.SetFixed(0);
-    //rope3.SetFixed(99);
+    rope3.SetFixed(99);
 
     rope.SetColor(BLUE);
     rope2.SetColor(RED);
     rope3.SetColor(GREEN);
 
 
-    float speed = 2.5f;
+    float speed = 1.5f;
     float amplitude = 2.0f;
 
     //Vec3 position, Vec3 direction, float strength, float spread_angle, float max_distance, bool enabled = true
@@ -187,10 +189,10 @@ int main(int argc, char** argv){
         float x, y, z;
 #ifdef SHOW_ROPES
         rope.GetPosition(0,x,y,z);
-        rope.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
+        rope.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f + ropes_offset,y,z);
         
         rope2.GetPosition(0,x,y,z);
-        rope2.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f,y,z);
+        rope2.SetPointPosition(0,cosf(GetTime() * speed) * 2.0f + ropes_offset,y,z);
         
         rope3.GetPosition(0,x,y,z);
         rope3.SetPointPosition(0, rope_3_x_offset + cosf(GetTime() * speed) * 2.0f,y,z);
@@ -244,6 +246,45 @@ int main(int argc, char** argv){
             courtain2.SetPosition(0, 0, x, y, z);
         }
 
+        if (IsKeyPressedRepeat(KEY_J)) {
+            courtain1.GetPosition(cols - 1, 0, x, y, z);
+            courtain1.SetPosition(cols - 1, 0, x, y + 0.2f, z);
+            
+            courtain2.GetPosition(0, 0, x, y, z);
+            courtain2.SetPosition(0, 0, x, y + 0.2f, z);
+        }
+
+        if (IsKeyPressedRepeat(KEY_K)) {
+            courtain1.GetPosition(cols - 1, 0, x, y, z);
+            courtain1.SetPosition(cols - 1, 0, x, y - 0.2f, z);
+
+            courtain2.GetPosition(0, 0, x, y, z);
+            courtain2.SetPosition(0, 0, x, y - 0.2f, z);
+        }
+
+        if (IsKeyPressed(KEY_H)) {
+            courtain1.GetPosition(cols - 1, 0, x, y, z);
+            courtain1.SetPosition(cols - 1, 0, x, y + 5.0f, z);
+            courtain1.GetPosition(0, 0, x, y, z);
+            courtain1.SetPosition(0, 0, x, y + 5.0f, z);
+
+            courtain2.GetPosition(0, 0, x, y, z);
+            courtain2.SetPosition(0, 0, x, y + 5.0f, z);
+            courtain2.GetPosition(cols - 1, 0, x, y, z);
+            courtain2.SetPosition(cols - 1, 0, x, y + 5.0f, z);
+        }
+        if (IsKeyPressed(KEY_G)) {
+            courtain1.GetPosition(cols - 1, 0, x, y, z);
+            courtain1.SetPosition(cols - 1, 0, x, y - 5.0f, z);
+            courtain1.GetPosition(0, 0, x, y, z);
+            courtain1.SetPosition(0, 0, x, y - 5.0f, z);
+
+            courtain2.GetPosition(0, 0, x, y, z);
+            courtain2.SetPosition(0, 0, x, y - 5.0f, z);
+            courtain2.GetPosition(cols - 1, 0, x, y, z);
+            courtain2.SetPosition(cols - 1, 0, x, y - 5.0f, z);
+        }
+
 #ifdef SHOW_ROPES
         rope.DrawRope();
         rope2.DrawRope();
@@ -259,7 +300,7 @@ int main(int argc, char** argv){
 
         //DrawSphere(Vector3{0.0f, 5.0f, 0.0f}, 0.5f, red);
 
-        //DrawCube(cubePosition, cubeSize, cubeSize, cubeSize, WHITE);
+        DrawCube(cubePosition, cubeSize, cubeSize, cubeSize, WHITE);
         DrawCubeWires(cubePosition, cubeSize, cubeSize, cubeSize, DARKGRAY);
 
 
@@ -275,7 +316,7 @@ int main(int argc, char** argv){
             ImGui::DragFloat("Amplitude", &amplitude, 0.01f, 0.0f, 10.0f);
         }
 
-        if (ImGui::CollapsingHeader("Rope 1")) {
+        if (ImGui::CollapsingHeader("Rope 1 (Blue)")) {
             ImGui::DragFloat("Friction 1", &rope1_friction, 0.001f, 0.0f, 2.0f);
             ImGui::DragFloat("Mass 1", &rope1_mass, 0.01f, 0.0f, 10.0f);
             
@@ -283,14 +324,14 @@ int main(int argc, char** argv){
             rope.SetAllMass(rope1_mass);
         }
 
-        if (ImGui::CollapsingHeader("Rope 2")) {
+        if (ImGui::CollapsingHeader("Rope 2 (Red)")) {
             ImGui::DragFloat("Friction 2", &rope2_friction, 0.001f, 0.0f, 2.0f);
             ImGui::DragFloat("Mass 2", &rope2_mass, 0.01f, 0.0f, 10.0f);
             rope2.SetAllFriction(rope2_friction);
             rope2.SetAllMass(rope2_mass);
         }
 
-        if (ImGui::CollapsingHeader("Rope 3")) {
+        if (ImGui::CollapsingHeader("Rope 3 (Green)")) {
             ImGui::DragFloat("Friction 3", &rope3_friction, 0.001f, 0.0f, 2.0f);
             ImGui::DragFloat("Mass 3", &rope3_mass, 0.01f, 0.0f, 10.0f);
             rope3.SetAllFriction(rope3_friction);
